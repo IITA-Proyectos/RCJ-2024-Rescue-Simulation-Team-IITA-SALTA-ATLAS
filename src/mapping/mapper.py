@@ -163,9 +163,9 @@ class Mapper:
         #self.has_detected_victim_from_position2()
         #self.victim_position()
         
-        if (self.pixel_grid.arrays["robot_detected_fixture_from"][robot_array_index[0], robot_array_index[1]]) == True:
-            listavc = []
-            listavc.append([FixtureClasiffier.classify_fixture(), self.pixel_grid.grid_index_to_array_index(self.robot_grid_index)])
+        #if (self.pixel_grid.arrays["robot_detected_fixture_from"][robot_array_index[0], robot_array_index[1]]) == True:
+        #    listavc = []
+        #    listavc.append([FixtureClasiffier.classify_fixture(), self.pixel_grid.grid_index_to_array_index(self.robot_grid_index)])
         return self.pixel_grid.arrays["robot_detected_fixture_from"][robot_array_index[0], robot_array_index[1]] #retrona True or False (dependiendo si se detecto una victima o no)
     
     #def victim_position(self):
