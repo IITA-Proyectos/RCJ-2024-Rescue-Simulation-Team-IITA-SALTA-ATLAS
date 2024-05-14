@@ -527,6 +527,12 @@ class FinalMatrixCreator:
 
 
         # Mix everything togehter
+        matrix_walls = pixel_grid.matrix_to_arrays((pixel_grid.arrays["walls"]))
+        matrix_victims = pixel_grid.matrix_to_arrays((pixel_grid.arrays["victims"]))
+        
+        #print(pixel_grid.arrays["walls"])
+        print("SEPARACION")
+        #print(pixel_grid.arrays["victims"])
         text_grid = self.__get_final_text_grid(wall_node_array, floor_string_array, robot_node)
         text_grid = self.stringMatriz(text_grid)
         text_grid = self.delete_row(text_grid)
@@ -540,7 +546,6 @@ class FinalMatrixCreator:
         text_grid = self.correccion_de_interioresB(text_grid)
         text_grid = self.correccion_de_interioresC(text_grid)
         text_grid = self.correccion_de_interioresD(text_grid)
-
         return np.array(text_grid)
         
 
