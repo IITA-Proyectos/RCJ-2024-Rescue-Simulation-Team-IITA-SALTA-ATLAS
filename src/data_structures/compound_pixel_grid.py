@@ -188,3 +188,15 @@ class CompoundExpandablePixelGrid:
         matrix[self.arrays["victims"]] = 32
         #matrix[self.arrays["traversed"]] = 11
         return matrix
+
+    matrix = np.zeros((15, 15), dtype=bool)
+
+    def matrix_to_arrays(self, matrix):
+        big_list = []
+        for row in matrix:
+            small_list = []
+            for elemento in row:
+                small_list.append(elemento)
+            big_list.append(small_list)
+        return big_list
+
