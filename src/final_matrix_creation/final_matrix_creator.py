@@ -13,6 +13,130 @@ import time
 #from fixture_detection.fixture_clasification import FixtureClasiffier
 #from fixture_detection.fixture_detection import FixtureDetector
 
+class pre_matrix:
+    def __init__(self, square_size_px: int):
+        self.threshold = 10
+        self.__square_size_px = square_size_px
+
+    def preload_matrix(self, wall_array: np.ndarray):
+            """
+            Transform wall array to boolean node array.
+            """
+            shape = wall_array.shape
+            bool_node_array = np.zeros(shape, dtype=bool)
+            
+            for i in range(shape[0]):
+                for j in range(shape[1]):
+                    if wall_array[i, j]:
+                        bool_node_array[i, j] = True
+            
+            print(type(bool_node_array))
+            return bool_node_array
+    
+    """def correct_preload_victim(self, victims_array: np.ndarray):
+        shape = victims_array.shape
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                if victims_array[i, j] == False:
+                    countTrue = 0
+                    fila = -1
+                    columna = -1
+                    for a in range (3):
+                        for b in range (3):
+                            try:
+                                if victims_array[i + (fila), j + (columna)] == True:
+                                    columna += 1
+                                    countTrue += 1
+                                else:
+                                    columna += 1
+                            except IndexError:
+                                columna +=1
+                                pass
+                        fila += 1
+                        columna = -1
+
+                    if countTrue >= 3:
+                        victims_array[i, j] = True
+        return victims_array """
+
+    def correct_preload_victim(self, victims_array: np.ndarray): #agrega mas True para que se marque el espacio de la victima en la matriz
+            shape = victims_array.shape
+            for i in range(shape[0]):
+                for j in range(shape[1]):
+                    if victims_array[i, j] == False:
+                        countTrue = 0
+                        fila = -3
+                        columna = 0
+                        for a in range (7):
+                            for b in range (2):
+                                try:
+                                    if victims_array[i + (fila), j + (columna)] == True:
+                                        columna += 1
+                                        countTrue += 1
+                                    else:
+                                        columna += 1
+                                except IndexError:
+                                    columna +=1
+                                    pass
+                            fila += 1
+                            columna = 0
+
+                        if countTrue >= 5:
+                            victims_array[i, j] = True
+            return victims_array
+    
+    def removing_incorrect_True(self, victims_array: np.ndarray): #elimina True incorrectos
+            shape = victims_array.shape
+            for i in range(shape[0]):
+                for j in range(shape[1]):
+                    if victims_array[i, j] == True:
+                        countTrue = 0
+                        fila = -2
+                        columna = -2
+                        for a in range (5):
+                            for b in range (5):
+                                try:
+                                    if victims_array[i + (fila), j + (columna)] == True:
+                                        columna += 1
+                                        countTrue += 1
+                                    else:
+                                        columna += 1
+                                except IndexError:
+                                    columna +=1
+                                    pass
+                            fila += 1
+                            columna = -2
+
+                        if countTrue < 4:
+                            print("hola estoy en removing")
+                            victims_array[i, j] = False
+            return victims_array
+
+
+
+    def preload_final_matrix(self, walls_array: np.ndarray, victims_array: np.ndarray):
+        shape = walls_array.shape
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                if victims_array[i, j]:
+                    walls_array[i-2, j] = False
+
+        return walls_array
+    
+    def preload_final_matrix2(self, walls_array: np.ndarray, victims_array: np.ndarray):
+        shape = walls_array.shape
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                if victims_array[i, j]:
+                    walls_array[i, j-3] = False
+
+        return walls_array
+
+    
+#    def victim_in_grid(self):
+#        letter_position = FixtureDetector.get_fixture_positions_in_image("Y") * "ancho_de_matriz" + FixtureDetector.get_fixture_positions_in_image("X")
+#        return letter_position
+
 class WallMatrixCreator:
     def __init__(self, square_size_px: int):
         self.threshold = 10
@@ -106,10 +230,10 @@ class WallMatrixCreator:
 
         return grid
     
-    def preload_matrix(self, wall_array: np.ndarray):
-        """
-        Transform wall array to boolean node array.
-        """
+    """def preload_matrix(self, wall_array: np.ndarray):
+        
+        #Transform wall array to boolean node array.
+        
         shape = wall_array.shape
         bool_node_array = np.zeros(shape, dtype=bool)
         
@@ -121,7 +245,7 @@ class WallMatrixCreator:
         print(type(bool_node_array))
         return bool_node_array
     
-    """def correct_preload_victim(self, victims_array: np.ndarray):
+    def correct_preload_victim(self, victims_array: np.ndarray): #comentar esta funcion por aparte antes de borrarla
         shape = victims_array.shape
         for i in range(shape[0]):
             for j in range(shape[1]):
@@ -145,7 +269,7 @@ class WallMatrixCreator:
 
                     if countTrue >= 3:
                         victims_array[i, j] = True
-        return victims_array """
+        return victims_array 
 
     def correct_preload_victim(self, victims_array: np.ndarray): #agrega mas True para que se marque el espacio de la victima en la matriz
             shape = victims_array.shape
@@ -195,8 +319,9 @@ class WallMatrixCreator:
                             fila += 1
                             columna = -2
 
-                        if countTrue <= 3:
-                            victims_array[i, j] = True
+                        if countTrue < 4:
+                            print("hola estoy en removing")
+                            victims_array[i, j] = False
             return victims_array
 
 
@@ -218,6 +343,7 @@ class WallMatrixCreator:
                     walls_array[i, j-3] = False
 
         return walls_array
+        """
     def __orientation_grid_to_final_wall_grid(self, orientation_grid: list) -> np.ndarray:
         shape = np.array([len(orientation_grid), len(orientation_grid[0])])
         shape *= 2
@@ -344,6 +470,7 @@ class FinalMatrixCreator:
     def __init__(self, tile_size: float, resolution: float):
         self.__square_size_px = round(tile_size / 2 * resolution)
 
+        self.pre_matrix = pre_matrix(self.__square_size_px)
         self.wall_matrix_creator = WallMatrixCreator(self.__square_size_px)
         self.floor_matrix_creator = FloorMatrixCreator(self.__square_size_px)
 
@@ -628,25 +755,25 @@ class FinalMatrixCreator:
         #wall_node_array = self.wall_matrix_creator.transform_wall_array_to_bool_node_array(wall_array, offsets)
         print("----------- PRECARGA DE PAREDES -----------")
         
-        pre_walls = self.wall_matrix_creator.preload_matrix(wall_array)
+        pre_walls = self.pre_matrix.preload_matrix(wall_array)
 
         # Victim
         print("----------- PRECARGA DE VICTIMAS -----------")
-        pre_victims = self.wall_matrix_creator.preload_matrix(victims_array)
+        pre_victims = self.pre_matrix.preload_matrix(victims_array)
         print("first pre victims")
         print(pre_victims)
-        pre_victims = self.wall_matrix_creator.correct_preload_victim(pre_victims)
+        pre_victims = self.pre_matrix.correct_preload_victim(pre_victims)
         print("second pre victims")
         print(pre_victims)
-        #pre_victims = self.wall_matrix_creator.removing_incorrect_True(pre_victims)
-        #print("third pre victims")
-        #print(pre_victims)
+        pre_victims = self.pre_matrix.removing_incorrect_True(pre_victims)
+        print("third pre victims")
+        print(pre_victims)
 
         print("----------- MATRIZ FINAL PRECARGADA -----------")
-        new = self.wall_matrix_creator.preload_final_matrix(pre_walls, pre_victims)
+        new = self.pre_matrix.preload_final_matrix(pre_walls, pre_victims)
         print("first new")
         print(new)
-        new = self.wall_matrix_creator.preload_final_matrix2(pre_walls, pre_victims)
+        new = self.pre_matrix.preload_final_matrix2(pre_walls, pre_victims)
         print("second new")
         print(new)
 
