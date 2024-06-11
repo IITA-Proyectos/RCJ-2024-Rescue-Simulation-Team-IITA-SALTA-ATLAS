@@ -142,6 +142,14 @@ class FixtureDetector:
                 index = self.pixel_grid.coordinates_to_array_index(pos)
                 self.pixel_grid.arrays["victims"][index[0], index[1]] = True
                 self.pixel_grid.arrays["victim_angles"][index[0], index[1]] = angle.radians
+                self.map_fixtures_type(camera_images, robot_position)
+
+    def map_fixtures_type(self, camera_images, robot_position):
+        for i in camera_images:
+            positions, angles = self.get_fixture_positions_and_angles(robot_position, i)
+            for pos, angle in zip(positions, angles):
+                index = self.pixel_grid.coordinates_to_array_index(pos)
+                self.pixel_grid.arrays["victims_type"][index[0], index[1]] = "V"
 
     def mark_reported_fixture(self, robot_position, fixture_position):
         fixture_array_index = self.pixel_grid.coordinates_to_array_index(fixture_position)
