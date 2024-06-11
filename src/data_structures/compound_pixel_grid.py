@@ -37,8 +37,9 @@ class CompoundExpandablePixelGrid:
             "fixture_detection": np.zeros(self.array_shape, np.bool_),
             "fixture_detection_zone": np.zeros(self.array_shape, np.bool_),
             "fixture_distance_margin": np.zeros(self.array_shape, np.bool_),
-            "robot_detected_fixture_from": np.zeros(self.array_shape, np.bool_),
+            "robot_detected_fixture_from": np.zeros(self.array_shape, dtype=str),
             "robot_center_traversed": np.zeros(self.array_shape, np.bool_),
+            "victims_type": np.zeros(self.array_shape, dtype=str)
         }
 
     @property
