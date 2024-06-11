@@ -11,7 +11,7 @@ class FixtureMapper:
         self.tile_size = tile_size
         self.grid = pixel_grid
 
-        
+        self.position = 1 
 
         template_radious = int(0.05 * self.grid.resolution)
         template_diameter = math.ceil(template_radious * 2 + 1)
@@ -35,10 +35,16 @@ class FixtureMapper:
     def clean_up_fixtures(self):
         self.grid.arrays["victims"][self.grid.arrays["occupied"]] = False
 
+    """def map_detected_fixture(self, robot_position):
+        robot_array_index = self.grid.coordinates_to_array_index(robot_position)
+        template = self.__get_circle_template_indexes(self.detected_from_radius, robot_array_index)
+        self.grid.arrays["robot_detected_fixture_from"][template[0], template[1]] = True"""
+
     def map_detected_fixture(self, robot_position):
         robot_array_index = self.grid.coordinates_to_array_index(robot_position)
         template = self.__get_circle_template_indexes(self.detected_from_radius, robot_array_index)
-        self.grid.arrays["robot_detected_fixture_from"][template[0], template[1]] = True
+        self.grid.arrays["robot_detected_fixture_from"][template[0], template[1]] = str(self.position)
+        self.position += 1
 
     def __get_circle_template_indexes(self, radius, offsets=(0, 0)):
         diameter = int(radius * 2 + 1)
