@@ -10,6 +10,8 @@ import cv2 as cv
 from flags import SHOW_MAP_AT_END, DO_SAVE_FINAL_MAP, SAVE_FINAL_MAP_DIR, DO_SAVE_DEBUG_GRID, SAVE_DEBUG_GRID_DIR
 from mapping import mapper
 import time
+#from executor import executor
+#from executor.executor import Executor
 #from fixture_detection.fixture_clasification import FixtureClasiffier
 #from fixture_detection.fixture_detection import FixtureDetector
 
@@ -107,8 +109,7 @@ class pre_matrix:
                             fila += 1
                             columna = -2
 
-                        if countTrue < 4:
-                            print("hola estoy en removing")
+                        if countTrue < 5:
                             victims_array[i, j] = False
             return victims_array
 
@@ -119,7 +120,7 @@ class pre_matrix:
         for i in range(shape[0]):
             for j in range(shape[1]):
                 if victims_array[i, j]:
-                    walls_array[i-2, j] = False
+                    walls_array[i-2, j-3] = False
 
         return walls_array
     
@@ -193,6 +194,8 @@ class WallMatrixCreator:
             return []
 
         non_zero_indices = np.where(square != 0)
+        #print("imprimo non_zeros en status real")
+        #print(non_zero_indices)
         for orientation, template in self.templates.items():
             counts[orientation] = np.sum(template[non_zero_indices])
 
@@ -203,6 +206,33 @@ class WallMatrixCreator:
 
         return status
 
+        
+    def __get_tile_status_victim(self, min_x, min_y, max_x, max_y, fixture_array: np.ndarray) -> list:
+        square = fixture_array[min_x:max_x, min_y:max_y]
+        indice_a = 0
+        indice_b = 0
+        status = []
+        format_element = ""
+        for i in range ((square.shape[0])):
+            for a in range((square.shape[1])):
+                element = square[indice_a, indice_b]
+                if element != (""):
+                    format_element = element
+                    indice_b +=1
+                else:
+                    indice_b +=1
+            if format_element != (""):
+                status.append(format_element)
+                break
+            indice_b = 0
+            indice_a += 1
+        if format_element == (""):
+            status.append(format_element)
+
+
+        return status
+        
+    
     def transform_wall_array_to_bool_node_array(self, wall_array: np.ndarray, offsets: np.ndarray) -> np.ndarray:
         grid = []
         if SHOW_MAP_AT_END:
@@ -214,7 +244,7 @@ class WallMatrixCreator:
                 min_y = y
                 max_x = x + self.__square_size_px
                 max_y = y + self.__square_size_px
-                #print(min_x, min_y, max_x, max_y)
+                #print(f"min_x: {min_x} min_y: {min_y} max_x: {max_x} max_y: {max_y}")
                 if SHOW_MAP_AT_END:
                     bool_array_copy = cv.rectangle(bool_array_copy, (min_y, min_x), (max_y, max_x), (255,), 1)
                 
@@ -222,128 +252,68 @@ class WallMatrixCreator:
                 
                 row.append(list(val))
             grid.append(row)
+
         
         if SHOW_MAP_AT_END:
             cv.imshow("point_cloud_with_squares", cv.resize(bool_array_copy, (0, 0), fx=1, fy=1, interpolation=cv.INTER_AREA))
-
+        #print("grid real para ver que pasa")
+        #print(grid)
         grid = self.__orientation_grid_to_final_wall_grid(grid)
-
         return grid
     
-    """def preload_matrix(self, wall_array: np.ndarray):
+    def transform_robot_detected_to_string_node_array(self, fixture_array: np.ndarray, offsets: np.ndarray) -> np.ndarray:
+        grid = []
+        for x in range(offsets[0], fixture_array.shape[0] - self.__square_size_px, self.__square_size_px):
+            row = []
+            for y in range(offsets[1], fixture_array.shape[1] - self.__square_size_px, self.__square_size_px):
+                min_x = x
+                min_y = y
+                max_x = x + self.__square_size_px
+                max_y = y + self.__square_size_px
+                #print(min_x, min_y, max_x, max_y)
+                
+                val = self.__get_tile_status_victim(min_x, min_y, max_x, max_y, fixture_array)
+                
+                row.append(list(val))
+            grid.append(row)
+
         
-        #Transform wall array to boolean node array.
-        
-        shape = wall_array.shape
-        bool_node_array = np.zeros(shape, dtype=bool)
-        
-        for i in range(shape[0]):
-            for j in range(shape[1]):
-                if wall_array[i, j]:
-                    bool_node_array[i, j] = True
-        
-        print(type(bool_node_array))
-        return bool_node_array
+        #print(grid)
+        grid = self.__orientation_grid_to_final_fixture_grid(grid)
+        #print("transform fuction")
+        #print(grid)
+        return grid
     
-    def correct_preload_victim(self, victims_array: np.ndarray): #comentar esta funcion por aparte antes de borrarla
-        shape = victims_array.shape
-        for i in range(shape[0]):
-            for j in range(shape[1]):
-                if victims_array[i, j] == False:
-                    countTrue = 0
-                    fila = -1
-                    columna = -1
-                    for a in range (3):
-                        for b in range (3):
-                            try:
-                                if victims_array[i + (fila), j + (columna)] == True:
-                                    columna += 1
-                                    countTrue += 1
-                                else:
-                                    columna += 1
-                            except IndexError:
-                                columna +=1
-                                pass
-                        fila += 1
-                        columna = -1
-
-                    if countTrue >= 3:
-                        victims_array[i, j] = True
-        return victims_array 
-
-    def correct_preload_victim(self, victims_array: np.ndarray): #agrega mas True para que se marque el espacio de la victima en la matriz
-            shape = victims_array.shape
-            for i in range(shape[0]):
-                for j in range(shape[1]):
-                    if victims_array[i, j] == False:
-                        countTrue = 0
-                        fila = -3
-                        columna = 0
-                        for a in range (7):
-                            for b in range (2):
-                                try:
-                                    if victims_array[i + (fila), j + (columna)] == True:
-                                        columna += 1
-                                        countTrue += 1
-                                    else:
-                                        columna += 1
-                                except IndexError:
-                                    columna +=1
-                                    pass
-                            fila += 1
-                            columna = 0
-
-                        if countTrue >= 5:
-                            victims_array[i, j] = True
-            return victims_array
-    
-    def removing_incorrect_True(self, victims_array: np.ndarray): #elimina True incorrectos
-            shape = victims_array.shape
-            for i in range(shape[0]):
-                for j in range(shape[1]):
-                    if victims_array[i, j] == True:
-                        countTrue = 0
-                        fila = -2
-                        columna = -2
-                        for a in range (5):
-                            for b in range (5):
-                                try:
-                                    if victims_array[i + (fila), j + (columna)] == True:
-                                        columna += 1
-                                        countTrue += 1
-                                    else:
-                                        columna += 1
-                                except IndexError:
-                                    columna +=1
-                                    pass
-                            fila += 1
-                            columna = -2
-
-                        if countTrue < 4:
-                            print("hola estoy en removing")
-                            victims_array[i, j] = False
-            return victims_array
 
 
+    def __orientation_grid_to_final_fixture_grid(self, orientation_grid: list) -> np.ndarray:
+        shape = np.array([len(orientation_grid), len(orientation_grid[0])])
+        shape *= 2
 
-    def preload_final_matrix(self, walls_array: np.ndarray, victims_array: np.ndarray):
-        shape = walls_array.shape
-        for i in range(shape[0]):
-            for j in range(shape[1]):
-                if victims_array[i, j]:
-                    walls_array[i-2, j] = False
+        final_wall_grid = np.empty(shape, dtype=object)
+        final_wall_grid[:] = ""
+        
+        for y, row in enumerate(orientation_grid):
+            for x, value in enumerate(row):
+                x1 = x * 2
+                y1 = y * 2
 
-        return walls_array
-    
-    def preload_final_matrix2(self, walls_array: np.ndarray, victims_array: np.ndarray):
-        shape = walls_array.shape
-        for i in range(shape[0]):
-            for j in range(shape[1]):
-                if victims_array[i, j]:
-                    walls_array[i, j-3] = False
+                for orientation in value:
+                    if orientation:
+                        if len(orientation) > 1:
+                            final_x = x1 + int(orientation[1])
+                        else:
+                            final_x = x1
+                        
+                        if len(orientation) > 0:
+                            final_y = y1 + int(orientation[0])
+                        else:
+                            final_y = y1
 
-        return walls_array
-        """
+                        final_wall_grid[final_y, final_x] = orientation
+
+        return final_wall_grid
+
     def __orientation_grid_to_final_wall_grid(self, orientation_grid: list) -> np.ndarray:
         shape = np.array([len(orientation_grid), len(orientation_grid[0])])
         shape *= 2
@@ -736,13 +706,15 @@ class FinalMatrixCreator:
             fila += 1
 
         return matriz
-    def pixel_grid_to_final_grid(self, pixel_grid: CompoundExpandablePixelGrid, robot_start_position: np.ndarray) -> np.ndarray:
+    def pixel_grid_to_final_grid(self, pixel_grid: CompoundExpandablePixelGrid, robot_start_position: np.ndarray, victimas) -> np.ndarray: #pasar parametro de victimas
         np.set_printoptions(linewidth=1000000000000, threshold=100000000000000)
         #linewidth: ancho maximo de impresion
         #threshold: limite de elementos que se imprimen
         wall_array = pixel_grid.arrays["walls"]
         color_array = pixel_grid.arrays["floor_color"]
         victims_array = pixel_grid.arrays["victims"]
+        victims_type_array = pixel_grid.arrays["victims_type"]
+        fixture_array = pixel_grid.arrays["robot_detected_fixture_from"]
 
         if DO_SAVE_FINAL_MAP:
             cv.imwrite(f"{SAVE_FINAL_MAP_DIR}/WALL_PIXEL_GRID{str(time.time()).rjust(50)}.png", wall_array.astype(np.uint8) * 255)
@@ -753,37 +725,50 @@ class FinalMatrixCreator:
                 
         # Walls
         #wall_node_array = self.wall_matrix_creator.transform_wall_array_to_bool_node_array(wall_array, offsets)
-        print("----------- PRECARGA DE PAREDES -----------")
+        #print("----------- PRECARGA DE PAREDES -----------")
         
         pre_walls = self.pre_matrix.preload_matrix(wall_array)
 
         # Victim
-        print("----------- PRECARGA DE VICTIMAS -----------")
+        #print("----------- PRECARGA DE VICTIMAS -----------")
         pre_victims = self.pre_matrix.preload_matrix(victims_array)
-        print("first pre victims")
-        print(pre_victims)
+        #print("first pre victims")
+        #print(pre_victims)
         pre_victims = self.pre_matrix.correct_preload_victim(pre_victims)
-        print("second pre victims")
-        print(pre_victims)
+        #print("second pre victims")
+        #print(pre_victims)
         pre_victims = self.pre_matrix.removing_incorrect_True(pre_victims)
-        print("third pre victims")
-        print(pre_victims)
+        #print("third pre victims")
+        #print(pre_victims)
 
-        print("----------- MATRIZ FINAL PRECARGADA -----------")
+        #print("----------- MATRIZ FINAL PRECARGADA -----------")
         new = self.pre_matrix.preload_final_matrix(pre_walls, pre_victims)
-        print("first new")
+        #print("first new")
         print(new)
-        new = self.pre_matrix.preload_final_matrix2(pre_walls, pre_victims)
-        print("second new")
-        print(new)
+        #new = self.pre_matrix.preload_final_matrix2(pre_walls, pre_victims)
+        #print("second new")
+        #print(new)
 
+        #print(victims_type_array)
+
+        #print("SEPARACION")
+
+        #print(fixture_array)
+        
         # Walls & Victims
         offsets = self.__get_offsets(self.__square_size_px, pixel_grid.offsets)
         wall_node_array = self.wall_matrix_creator.transform_wall_array_to_bool_node_array(new, offsets)
+        robot_detected_array = self.wall_matrix_creator.transform_robot_detected_to_string_node_array(fixture_array, offsets)
+        print(robot_detected_array)
+
+
 
         # Floor
         floor_offsets = self.__get_offsets(self.__square_size_px * 2, pixel_grid.offsets + self.__square_size_px)
         floor_string_array = self.floor_matrix_creator.get_floor_colors(color_array, floor_offsets)
+
+        #prueba:
+        #new_array = self
 
         # Start tile
         if robot_start_position is None:
@@ -814,15 +799,21 @@ class FinalMatrixCreator:
         #matrix_victims = pixel_grid.matrix_to_arrays((pixel_grid.arrays["victims"]))
         
         #print(pixel_grid.arrays["walls"])
-        print("SEPARACION")
+        #print("SEPARACION")
         #print(pixel_grid.arrays["victims"])
+        vict_grid = self.__get_victims_text_grid(robot_detected_array, victimas)
+        #print("acaaaa")
+        #print(vict_grid)
         text_grid = self.__get_final_text_grid(wall_node_array, floor_string_array, robot_node)
-        text_grid = self.stringMatriz(text_grid)
-        text_grid = self.delete_row(text_grid)
-        text_grid = self.transposed_matriz2(text_grid)
-        text_grid = self.delete_row(text_grid)
-        text_grid = self.transposed_matriz2(text_grid)
-        text_grid = self.stringMatrizreverse(text_grid)
+        text_grid = self.unificador_de_matrices(vict_grid, text_grid)
+        print("el programa")
+        print(text_grid)
+        #text_grid = self.stringMatriz(text_grid)
+        #text_grid = self.delete_row(text_grid)
+        #text_grid = self.transposed_matriz2(text_grid)
+        #text_grid = self.delete_row(text_grid)
+        #text_grid = self.transposed_matriz2(text_grid)
+        #text_grid = self.stringMatrizreverse(text_grid)
         """text_grid = self.correccion_de_bordes_filas(text_grid)
         text_grid = self.correccion_de_bordes_columnas(text_grid)
         text_grid = self.correccion_de_interioresA(text_grid)
@@ -875,6 +866,26 @@ class FinalMatrixCreator:
         
         self.__set_node_as_character(final_text_grid, robot_node, "5")
         return final_text_grid
+    
+    def __get_victims_text_grid(self, robot_detected_array: np.ndarray, executorvariable ) -> list:       #executorvariable = executor.Executor
+
+        victims_grid = []
+
+        # set walls
+        for row in robot_detected_array:
+            f_row = []
+            for val in row:
+                if val == (""):
+                    f_row.append("0")
+                else:
+                    new_letter = executorvariable[int(val)]
+                    #print(executorvariable)
+                    #f_row.append(val)
+                    print(new_letter)
+                    f_row.append(new_letter)   #new_letter
+            victims_grid.append(f_row)
+
+        return victims_grid
         
     
     def __get_offsets(self, square_size: float, raw_offsets: np.array) -> np.ndarray:
@@ -891,3 +902,55 @@ class FinalMatrixCreator:
 
         return final_text_grid
 
+    def unificador_de_matrices(self, victim_matrix, original_matrix):
+        fila = 0
+        columna = 0
+
+        cant_f = len(victim_matrix)
+        cant_c = len(victim_matrix[0])
+        for i in range(cant_f):
+            for j in range(cant_c):
+                #print(f"fila: {fila} y columna {columna}")
+                lmatrix = victim_matrix[fila][columna]
+                if lmatrix != ("0"):
+                    #print(f"fila: {fila} y columna {columna}")
+                    #print(lmatrix)
+                    fila2 = (-3)
+                    columna2 = (-3)
+                    for a in range (7):
+                        for b in range (7):
+                            #print(fila2, columna2)   
+                            positon_matrix = original_matrix[fila + fila2][columna + columna2]
+                            #print(f"fila2 {[fila + fila2]} y columna2{[columna + columna2]}")
+                            if positon_matrix == ("0"):
+                                #print(columna2)
+                                #print(f"fila -1 = {(fila + fila2) - 1} y fila +1 {(fila + fila2) + 1}")
+                                try:
+                                    if (((original_matrix[(fila + fila2) - 1][columna + columna2]) == ("1")) and ((original_matrix[(fila + fila2) + 1][columna + columna2]) == ("1"))): #or (((original_matrix[(fila + fila2) - 2][columna + columna2]) == ("1")) and ((original_matrix[(fila + fila2) + 1][columna + columna2]) == ("1"))) or (((original_matrix[(fila + fila2) - 1][columna + columna2]) == ("1")) and ((original_matrix[(fila + fila2) + 22][columna + columna2]) == ("1"))):
+                                        #print("entrooo")
+                                        #print(f"fila2 {[fila + fila2]} y columna2{[columna + columna2]}")
+                                        original_matrix[fila + fila2][columna + columna2] = lmatrix
+                                        columna2 += 1
+                                except IndexError:
+                                    pass
+
+                                try:
+                                    if (((original_matrix[fila + fila2][(columna + columna2) - 1]) == ("1")) and ((original_matrix[fila + fila2][(columna + columna2) + 1]) == ("1"))): #or (((original_matrix[fila + fila2][(columna + columna2) - 2]) == ("1")) and ((original_matrix[fila + fila2][(columna + columna2) + 1])) or (((original_matrix[fila + fila2][(columna + columna2) - 1]) == ("1")) and ((original_matrix[fila + fila2][(columna + columna2) + 2])))):
+                                        #print("entrooo2")
+                                        #print(f"fila2 {[fila + fila2]} y columna2{[columna + columna2]}")
+                                        original_matrix[fila + fila2][columna + columna2] = lmatrix 
+                                        columna2 += 1
+                                except IndexError:
+                                    pass
+                                columna2 += 1
+                            else:
+                                columna2 += 1
+                        columna2 = -3
+                        fila2 += 1
+                    columna += 1
+                else:
+                    columna += 1
+            columna = 0
+            fila +=1
+
+        return original_matrix
