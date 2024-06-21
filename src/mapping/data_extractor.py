@@ -4,6 +4,7 @@ import copy
 
 import utilities
 
+import os
 from flags import SHOW_DEBUG
 
 class FloorColorExtractor:
@@ -48,12 +49,15 @@ class FloorColorExtractor:
                         {
                             "range":((0, 182, 49), (0, 204, 232)),
                             "threshold":0.2},
+
+                    
                     }
         self.final_image = np.zeros((700, 700, 3), np.uint8)
         
     def get_square_color(self, image, square_points):
         square = image[square_points[0]:square_points[1], square_points[2]:square_points[3]]
         square = cv.cvtColor(square, cv.COLOR_BGR2HSV)
+        self.save(self, square, output_folder="C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots")
         if np.count_nonzero(square) == 0:
             return "nothing"
         color_counts = {}
@@ -66,6 +70,22 @@ class FloorColorExtractor:
             return "nothing"
         else:
             return max(color_counts, key=color_counts.get)
+        
+    def save(self, image, output_folder):
+        contador = 0
+        # Create the output folder if it doesn't exist
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+        
+        # Get the filename
+        filename = "cuadrito.png"
+        
+        # Generate the output path
+        output_path = os.path.join(output_folder, filename)
+        
+        # Save the HSV image
+        cv.imwrite(output_path, image)
+        print(f"HSV image saved as {output_path}")
     
     def get_sq_color(self, image, square_points):
         square = image[square_points[0]:square_points[1], square_points[2]:square_points[3]]
@@ -77,6 +97,7 @@ class FloorColorExtractor:
             return (255, 255, 255)
         else:
             return (100, 100, 100)
+
 
     def get_floor_colors(self, floor_image, robot_position):
 

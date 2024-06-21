@@ -82,6 +82,8 @@ class Executor:
 
         self.color_filter_tuner = ColorFilterTuner(ColorFilter((0, 0, 29), (0, 0, 137)), TUNE_FILTER)
 
+        self.victimas = [None]
+
     def run(self):
         """Advances the simulation, updates all components and executes the state machine."""
         
@@ -291,7 +293,7 @@ class Executor:
 
 
     def state_end(self, change_state_function):
-        final_matrix = self.final_matrix_creator.pixel_grid_to_final_grid(self.mapper.pixel_grid, self.mapper.start_position)
+        final_matrix = self.final_matrix_creator.pixel_grid_to_final_grid(self.mapper.pixel_grid, self.mapper.start_position, self.victimas) #self.victimas (ponerlo como parametro directo)
         self.robot.comunicator.send_map(final_matrix)
         self.robot.comunicator.send_end_of_play()
 
@@ -352,6 +354,7 @@ class Executor:
             if self.sequencer.simple_event():
                 print("sending letter:", self.letter_to_report)
                 self.robot.comunicator.send_victim(self.robot.raw_position, self.letter_to_report)
+                self.victimas.append(self.letter_to_report)
         
             self.seq_delay_seconds(0.1)
         
