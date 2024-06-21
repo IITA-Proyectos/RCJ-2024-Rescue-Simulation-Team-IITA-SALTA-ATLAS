@@ -1,5 +1,0 @@
-ejecutar powershell como administrador
-comandos importantes para ejecutar 
-cd .. (x2)
-cd (dirigirse hasta la carpeta del acceso directo de webots) (x5)
-.\webots-controller.exe --protocol=tcp --ip-address=(poner ip correspondiente)  C:\Users\nacho\Documents\Programacion\webots_2023\RCJ-2024-Rescue-Simulation-Team-ABC\(poner el nombre del archivo con .py)
