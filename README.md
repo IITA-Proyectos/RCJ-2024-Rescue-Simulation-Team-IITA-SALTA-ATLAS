@@ -25,7 +25,7 @@ Go to the directory '''scripts''' and run the file '''update_path.py'''. Then ru
 
 # 3-Load the robot
 
-Go to the directory ```robot_jsons``` and pick the one with the highest number.
+Go to the directory ```Robot_json``` and and select the file called '''robotjson9.json'''
 
 # 4-Run the code
 
