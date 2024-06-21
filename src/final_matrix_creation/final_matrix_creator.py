@@ -415,7 +415,7 @@ class FloorMatrixCreator:
         if len(color_counts) == 0:
             return "0"
         else:
-            dominant_color_label = max(color_counts, key=color_counts.get)
+            """dominant_color_label = max(color_counts, key=color_counts.get)
         
             #Save the square image
             image_dir = "C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots"
@@ -426,8 +426,8 @@ class FloorMatrixCreator:
             cv.imwrite(image_name, square_image)
             print(f"Square image saved as {image_name}")
             
-            return dominant_color_label
-            #return max(color_counts, key=color_counts.get)
+            return dominant_color_label"""
+            return max(color_counts, key=color_counts.get)
 
 
     def get_floor_colors(self, floor_array: np.ndarray, offsets: np.ndarray) -> np.ndarray:

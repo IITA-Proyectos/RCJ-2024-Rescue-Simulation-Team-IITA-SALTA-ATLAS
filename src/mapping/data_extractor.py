@@ -57,7 +57,7 @@ class FloorColorExtractor:
     def get_square_color(self, image, square_points):
         square = image[square_points[0]:square_points[1], square_points[2]:square_points[3]]
         square = cv.cvtColor(square, cv.COLOR_BGR2HSV)
-        self.save(self, square, output_folder="C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots")
+        #self.save(self, square, output_folder="C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots")
         if np.count_nonzero(square) == 0:
             return "nothing"
         color_counts = {}
