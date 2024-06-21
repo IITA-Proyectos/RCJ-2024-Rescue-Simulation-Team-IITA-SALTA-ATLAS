@@ -106,6 +106,7 @@ class Mapper:
         # Load floor colors
         if camera_images is not None:
             self.floor_mapper.map_floor(camera_images, self.pixel_grid.coordinates_to_grid_index(self.robot_position))
+            #FloorColorExtractor.get_floor_colors(camera_images, self.pixel_grid.coordinates_to_grid_index(self.robot_position))
 
         if camera_images is not None and lidar_detections is not None:
             self.fixture_detector.map_fixtures(camera_images, self.robot_position)
