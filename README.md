@@ -1,6 +1,8 @@
 # Rescue-Simulation-2024
 Repository of the team that is preparing for the Rescue-Simulation category of the Robocup Junior 2024 competition
 
+# SRC
+The entire program is included in the src folder, which is made up of several files that must be compiled in order to run them all at the same time.
 # 1-Install dependencies
 Dependencies:
 
