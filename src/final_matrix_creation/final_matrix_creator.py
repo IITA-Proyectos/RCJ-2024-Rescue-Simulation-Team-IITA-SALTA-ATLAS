@@ -7,6 +7,8 @@ import skimage
 import numpy as np
 import cv2 as cv
 
+import os
+
 from flags import SHOW_MAP_AT_END, DO_SAVE_FINAL_MAP, SAVE_FINAL_MAP_DIR, DO_SAVE_DEBUG_GRID, SAVE_DEBUG_GRID_DIR
 from mapping import mapper
 import time
@@ -341,8 +343,10 @@ class WallMatrixCreator:
 
 class FloorMatrixCreator:
     def __init__(self, square_size_px: int) -> None:
+        self.contadorimage = 0
         self.__square_size_px = square_size_px * 2
         self.__floor_color_ranges = {
+
                     "0": # Normal
                         {   
                             "range":   ((0, 0, 37), (0, 0, 192)), 
@@ -355,32 +359,39 @@ class FloorMatrixCreator:
                     
                     "4": # Checkpoint
                         {
-                            "range":((95, 0, 65), (128, 122, 198)),
-                            "threshold":0.2},
+                            "range":((113, 77, 62), (114, 84, 77)),
+                            "threshold":0},
+
                     "2": # Hole
                         {
-                            "range":((0, 0, 10), (0, 0, 30)),
+                            "range":((0, 0, 10), (0, 0, 106)),
                             "threshold":0.2},
-                    
+
                     "3": # swamp
                         {
                             "range":((19, 112, 32), (19, 141, 166)),
                             "threshold":0.2},
 
-                    "6": # Connection 1-2
+                    "b": # Connection 1-2
                         {
-                            "range":((120, 182, 49), (120, 204, 232)),
+                            "range":((120, 182, 230), (120, 204, 232)),
                             "threshold":0.2},
+                        
+                    "g": # Connection 1-4
+                        {
+                            "range":((58, 223, 220), (60, 228, 225)),
+                            "threshold":0.5},
+                    
+                    "p": # Connection 2-3
+                        {
+                            "range":((128, 160, 172), (133, 192, 185)),
+                            "threshold":0.5},
 
-                    "8": # connection 3-4
-                        {
-                            "range":((132, 156, 36), (133, 192, 185)),
-                            "threshold":0.2},
 
-                    "7": # Connection2-3
+                    "r": # connection 3-4
                         {
-                            "range":((0, 182, 49), (0, 204, 232)),
-                            "threshold":0.2},
+                            "range":((0, 190, 213), (0, 205, 233)),
+                            "threshold":0.3},
                     }
         
                     #TODO Add Connection 1-4
@@ -391,7 +402,7 @@ class FloorMatrixCreator:
         square = floor_array[min_x:max_x, min_y:max_y]
 
         square = cv.cvtColor(square, cv.COLOR_BGR2HSV)
-        
+        square_image = square.copy()
         if np.count_nonzero(square) == 0:
             return "0"
         
@@ -404,8 +415,20 @@ class FloorMatrixCreator:
         if len(color_counts) == 0:
             return "0"
         else:
-            return max(color_counts, key=color_counts.get)
-    
+            dominant_color_label = max(color_counts, key=color_counts.get)
+        
+            #Save the square image
+            image_dir = "C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots"
+            if not os.path.exists(image_dir):
+                os.makedirs(image_dir)
+            image_name = os.path.join(image_dir, f"{dominant_color_label}_{self.contadorimage}_square.png")
+            self.contadorimage += 1
+            cv.imwrite(image_name, square_image)
+            print(f"Square image saved as {image_name}")
+            
+            return dominant_color_label
+            #return max(color_counts, key=color_counts.get)
+
 
     def get_floor_colors(self, floor_array: np.ndarray, offsets: np.ndarray) -> np.ndarray:
 
