@@ -27,7 +27,7 @@ class FloorColorExtractor:
                             "threshold":0.2},
                     "hole":
                         {
-                            "range":((0, 0, 10), (0, 0, 30)),
+                            "range":((0, 0, 30), (0, 0, 40)),
                             "threshold":0.2},
                     
                     "swamp":
