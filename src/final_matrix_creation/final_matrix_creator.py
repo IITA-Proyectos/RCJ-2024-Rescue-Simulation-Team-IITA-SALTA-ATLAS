@@ -34,7 +34,7 @@ class pre_matrix:
                     if wall_array[i, j]:
                         bool_node_array[i, j] = True
             
-            print(type(bool_node_array))
+            #print(type(bool_node_array))
             return bool_node_array
     
     """def correct_preload_victim(self, victims_array: np.ndarray):
@@ -365,7 +365,7 @@ class FloorMatrixCreator:
 
                     "2": # Hole
                         {
-                            "range":((0, 0, 10), (0, 0, 106)),
+                            "range":((0, 0, 30), (0, 0, 40)),
                             "threshold":0.2},
 
                     "3": # swamp
@@ -380,7 +380,7 @@ class FloorMatrixCreator:
 
                     "y": #Connection 1-3
                         {
-                            "range":((30, 190, 227), (30, 205, 233)),
+                            "range":((30, 205, 233), (30, 205, 233)),
                             "threshold":0.2},
                         
                     "g": # Connection 1-4
@@ -414,18 +414,17 @@ class FloorMatrixCreator:
 
         square = cv.cvtColor(square, cv.COLOR_BGR2HSV)
         square_image = square.copy()
-        image_dir = "C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots"
+        """image_dir = "C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots"
         if not os.path.exists(image_dir):
             os.makedirs(image_dir)
         image_name = os.path.join(image_dir, f"IMAGENDESCONOCIDA{self.contadorimagenes2}_square.png")
         self.contadorimagenes2 += 1
         cv.imwrite(image_name, square_image)
-        print(f"Square image saved as {image_name}")
+        print(f"Square image saved as {image_name}")"""
         
         color_counts = {}
         for color_key, color_range in self.__floor_color_ranges.items():
             colour_count = np.count_nonzero(cv.inRange(square, color_range["range"][0], color_range["range"][1]))
-            print(color_counts)
             if colour_count > color_range["threshold"] * square.shape[0] * square.shape[1]:
                 color_counts[color_key] = colour_count
         
