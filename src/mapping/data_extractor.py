@@ -42,13 +42,31 @@ class FloorColorExtractor:
 
                     "connection1-3":
                         {
-                            "range":((132, 156, 36), (133, 192, 185)),
+                            "range":((30, 190, 227), (30, 205, 233)),
                             "threshold":0.2},
+
+                    "connection 1-4":
+                        {
+                            "range":((58, 211, 221), (60, 228, 225)),
+                            "threshold":0.2},
+
 
                     "connection2-3":
                         {
-                            "range":((0, 182, 49), (0, 204, 232)),
+                            "range":((128, 160, 172), (133, 192, 187)),
                             "threshold":0.2},
+
+
+                    "connection2-4":
+                        {
+                            "range":((22, 177, 221), (22, 205, 233)),
+                            "threshold":0.2},
+
+
+                    "connection3-4":
+                        {
+                            "range":((0, 190, 213), (0, 205, 233)),
+                            "threshold":0.3},
 
                     
                     }
