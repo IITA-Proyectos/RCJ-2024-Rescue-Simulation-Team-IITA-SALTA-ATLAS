@@ -344,6 +344,7 @@ class WallMatrixCreator:
 class FloorMatrixCreator:
     def __init__(self, square_size_px: int) -> None:
         self.contadorimage = 0
+        self.contadorimagenes2 = 0
         self.__square_size_px = square_size_px * 2
         self.__floor_color_ranges = {
 
@@ -376,16 +377,26 @@ class FloorMatrixCreator:
                         {
                             "range":((120, 182, 230), (120, 204, 232)),
                             "threshold":0.2},
+
+                    "y": #Connection 1-3
+                        {
+                            "range":((30, 190, 227), (30, 205, 233)),
+                            "threshold":0.2},
                         
                     "g": # Connection 1-4
                         {
-                            "range":((58, 223, 220), (60, 228, 225)),
-                            "threshold":0.5},
+                            "range":((58, 211, 221), (60, 228, 225)),
+                            "threshold":0.2},
                     
                     "p": # Connection 2-3
                         {
-                            "range":((128, 160, 172), (133, 192, 185)),
-                            "threshold":0.5},
+                            "range":((128, 160, 172), (133, 192, 187)), #(63, 28, 72), (67, 30, 75)
+                            "threshold":0.2},
+
+                    "o": # Connection 2-4
+                        {
+                            "range":((22, 177, 221), (22, 205, 233)),
+                            "threshold":0.2},
 
 
                     "r": # connection 3-4
@@ -403,19 +414,25 @@ class FloorMatrixCreator:
 
         square = cv.cvtColor(square, cv.COLOR_BGR2HSV)
         square_image = square.copy()
-        if np.count_nonzero(square) == 0:
-            return "0"
+        image_dir = "C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots"
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
+        image_name = os.path.join(image_dir, f"IMAGENDESCONOCIDA{self.contadorimagenes2}_square.png")
+        self.contadorimagenes2 += 1
+        cv.imwrite(image_name, square_image)
+        print(f"Square image saved as {image_name}")
         
         color_counts = {}
         for color_key, color_range in self.__floor_color_ranges.items():
             colour_count = np.count_nonzero(cv.inRange(square, color_range["range"][0], color_range["range"][1]))
+            print(color_counts)
             if colour_count > color_range["threshold"] * square.shape[0] * square.shape[1]:
                 color_counts[color_key] = colour_count
         
         if len(color_counts) == 0:
             return "0"
         else:
-            """dominant_color_label = max(color_counts, key=color_counts.get)
+            dominant_color_label = max(color_counts, key=color_counts.get)
         
             #Save the square image
             image_dir = "C:/Users/nacho/Documents/Programacion/webots_2023/RCJ-2024-Rescue-Simulation-Team-ABC/example/imageneswebots"
@@ -426,8 +443,8 @@ class FloorMatrixCreator:
             cv.imwrite(image_name, square_image)
             print(f"Square image saved as {image_name}")
             
-            return dominant_color_label"""
-            return max(color_counts, key=color_counts.get)
+            return dominant_color_label
+            #return max(color_counts, key=color_counts.get)
 
 
     def get_floor_colors(self, floor_array: np.ndarray, offsets: np.ndarray) -> np.ndarray:
@@ -767,7 +784,7 @@ class FinalMatrixCreator:
         #print("----------- MATRIZ FINAL PRECARGADA -----------")
         new = self.pre_matrix.preload_final_matrix(pre_walls, pre_victims)
         #print("first new")
-        print(new)
+        #print(new)
         #new = self.pre_matrix.preload_final_matrix2(pre_walls, pre_victims)
         #print("second new")
         #print(new)
