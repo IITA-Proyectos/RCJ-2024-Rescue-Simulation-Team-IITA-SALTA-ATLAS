@@ -532,7 +532,7 @@ class FinalMatrixCreator:
     def delete_row(self, matriz_procesar):
     #Quita las filas que contengan valores innecesarios
         columnastotales = len(matriz_procesar[0])
-        column_reference = [0]*columnastotales
+        column_reference = ["0"]*columnastotales
         
     
         result = [elem for elem in matriz_procesar if elem != column_reference]
@@ -846,13 +846,10 @@ class FinalMatrixCreator:
         text_grid = self.__get_final_text_grid(wall_node_array, floor_string_array, robot_node)
         text_grid = self.unificador_de_matrices(vict_grid, text_grid)
         print("el programa")
-        print(text_grid)
-        #text_grid = self.stringMatriz(text_grid)
-        #text_grid = self.delete_row(text_grid)
-        #text_grid = self.transposed_matriz2(text_grid)
-        #text_grid = self.delete_row(text_grid)
-        #text_grid = self.transposed_matriz2(text_grid)
-        #text_grid = self.stringMatrizreverse(text_grid)
+        text_grid = self.delete_row(text_grid)
+        text_grid = self.transposed_matriz2(text_grid)
+        text_grid = self.delete_row(text_grid)
+        text_grid = self.transposed_matriz2(text_grid)
         """text_grid = self.correccion_de_bordes_filas(text_grid)
         text_grid = self.correccion_de_bordes_columnas(text_grid)
         text_grid = self.correccion_de_interioresA(text_grid)
