@@ -342,7 +342,6 @@ class WallMatrixCreator:
 #        return letter_position
 
 
-
 class FloorMatrixCreator:
     def __init__(self, square_size_px: int) -> None:
         self.contadorimage = 0
@@ -352,8 +351,8 @@ class FloorMatrixCreator:
 
                     "0": # Normal
                         {   
-                            "range":   ((0, 0, 37), (0, 0, 192)), 
-                            "threshold":0.2},
+                            "range":   ((0, 0, 38), (0, 0, 192)), 
+                            "threshold":0.1},
 
                     "0": # Void
                         {
@@ -363,17 +362,17 @@ class FloorMatrixCreator:
                     "4": # Checkpoint
                         {
                             "range":((113, 77, 62), (114, 84, 77)),
-                            "threshold":0},
+                            "threshold":0.1},
 
                     "2": # Hole
                         {
-                            "range":((0, 0, 30), (0, 0, 40)),
-                            "threshold":0.2},
+                            "range":((0, 0, 28), (0, 0, 38)),
+                            "threshold":0.1},
 
                     "3": # swamp
                         {
-                            "range":((19, 112, 32), (19, 141, 166)),
-                            "threshold":0.2},
+                            "range":((19, 112, 38), (19, 141, 166)),
+                            "threshold":0.3},
 
                     "b": # Connection 1-2
                         {
@@ -388,7 +387,7 @@ class FloorMatrixCreator:
                     "g": # Connection 1-4
                         {
                             "range":((58, 211, 221), (60, 228, 225)),
-                            "threshold":0.2},
+                            "threshold":0.3},
                     
                     "p": # Connection 2-3
                         {
@@ -598,21 +597,24 @@ class FinalMatrixCreator:
         cant_f = (len(matriz))
         cant_c = (len(matriz[0]))
         for i in range (0, cant_f):
-            for i in range (0, cant_c):
+            for j in range (0, cant_c):
                 lmatrix = matriz[fila][columna]
                 if lmatrix != "0":
                     columna += 1
                 elif lmatrix == "0":
-                    if ((matriz[fila][columna + 1]) == "1") and ((matriz[fila][columna - 1]) == "1"):
-                        matriz[fila][columna] = "1"
-                        columna += 1
+                    try:
+                        if ((matriz[fila][columna + 1]) == "1") and ((matriz[fila][columna - 1]) == "1"):
+                            matriz[fila][columna] = "1"
+                            columna += 1
 
-                    elif ((matriz[fila + 1][columna]) == "1") and ((matriz[fila - 1][columna]) == "1"):
-                        matriz[fila][columna] = "1"
-                        columna += 1
+                        elif ((matriz[fila + 1][columna]) == "1") and ((matriz[fila - 1][columna]) == "1"):
+                            matriz[fila][columna] = "1"
+                            columna += 1
                 
-                    else:
-                        columna+= 1
+                        else:
+                            columna+= 1
+                    except IndexError:
+                            pass
             columna = 0
             fila += 1
         return matriz
@@ -757,17 +759,34 @@ class FinalMatrixCreator:
                 lmatrix = matriz[fila][columna]
                 if lmatrix == "0":
                     try:
-                        if ((((matriz[fila -1][columna - 1]) == ("r")) and ((matriz[fila -1][columna +1]) == ("r")) and ((matriz[fila +1][columna - 1]) == ("r")) and ((matriz[fila +1][columna + 1]) == ("r")))  or  (((matriz[fila -1][columna - 1]) == ("g")) and ((matriz[fila -1][columna +1]) == ("g")) and ((matriz[fila +1][columna - 1]) == ("g")) and ((matriz[fila +1][columna + 1]) == ("g")))  or  (((matriz[fila -1][columna - 1]) == ("o")) and ((matriz[fila -1][columna +1]) == ("o")) and ((matriz[fila +1][columna - 1]) == ("o")) and ((matriz[fila +1][columna + 1]) == ("o")))):
-                            matriz[fila-1][columna-1] = "7"
-                            matriz[fila-1][columna] = "7"
-                            matriz[fila-1][columna+1] = "7"
-                            matriz[fila][columna-1] = "7"
-                            matriz[fila][columna+1] = "7"
-                            matriz[fila+1][columna-1] = "7"
-                            matriz[fila+1][columna] = "7"
-                            matriz[fila+1][columna+1] = "7"
+                        if (((matriz[fila -1][columna - 1]) == ("r")) and ((matriz[fila -1][columna +1]) == ("r")) and ((matriz[fila +1][columna - 1]) == ("r")) and ((matriz[fila +1][columna + 1]) == ("r"))):
+                            matriz[fila-1][columna-1] = "r"
+                            matriz[fila-1][columna] = "r"
+                            matriz[fila-1][columna+1] = "r"
+                            matriz[fila][columna-1] = "r"
+                            matriz[fila][columna+1] = "r"
+                            matriz[fila+1][columna-1] = "r"
+                            matriz[fila+1][columna] = "r"
+                            matriz[fila+1][columna+1] = "r"
 
-
+                        elif (((matriz[fila -1][columna - 1]) == ("g")) and ((matriz[fila -1][columna +1]) == ("g")) and ((matriz[fila +1][columna - 1]) == ("g")) and ((matriz[fila +1][columna + 1]) == ("g"))):
+                            matriz[fila-1][columna-1] = "g"
+                            matriz[fila-1][columna] = "g"
+                            matriz[fila-1][columna+1] = "g"
+                            matriz[fila][columna-1] = "g"
+                            matriz[fila][columna+1] = "g"
+                            matriz[fila+1][columna-1] = "g"
+                            matriz[fila+1][columna] = "g"
+                            matriz[fila+1][columna+1] = "g"
+                        elif (((matriz[fila -1][columna - 1]) == ("o")) and ((matriz[fila -1][columna +1]) == ("o")) and ((matriz[fila +1][columna - 1]) == ("o")) and ((matriz[fila +1][columna + 1]) == ("o"))):
+                            matriz[fila-1][columna-1] = "o"
+                            matriz[fila-1][columna] = "o"
+                            matriz[fila-1][columna+1] = "o"
+                            matriz[fila][columna-1] = "o"
+                            matriz[fila][columna+1] = "o"
+                            matriz[fila+1][columna-1] = "o"
+                            matriz[fila+1][columna] = "o"
+                            matriz[fila+1][columna+1] = "o"
                     except IndexError:
                             pass
                 columna += 1
@@ -792,7 +811,7 @@ class FinalMatrixCreator:
                 lmatrix = matriz[fila][columna]
                 if lmatrix == "0":
                     try:
-                        if (((matriz[fila -1][columna - 1]) == ("7")) and ((matriz[fila -1][columna +1]) == ("7")) and ((matriz[fila +1][columna - 1]) == ("7")) and ((matriz[fila +1][columna + 1]) == ("7"))):  
+                        if ((((matriz[fila -1][columna - 1]) == ("r")) and ((matriz[fila -1][columna +1]) == ("r")) and ((matriz[fila +1][columna - 1]) == ("r")) and ((matriz[fila +1][columna + 1]) == ("r"))) or (((matriz[fila -1][columna - 1]) == ("g")) and ((matriz[fila -1][columna +1]) == ("g")) and ((matriz[fila +1][columna - 1]) == ("g")) and ((matriz[fila +1][columna + 1]) == ("g"))) or (((matriz[fila -1][columna - 1]) == ("o")) and ((matriz[fila -1][columna +1]) == ("o")) and ((matriz[fila +1][columna - 1]) == ("o")) and ((matriz[fila +1][columna + 1]) == ("o")))):  
                             if contador == 0:
                                 fila_fija = fila
                                 columna_fija = columna
@@ -859,12 +878,12 @@ class FinalMatrixCreator:
             while queue:
                 row, col = queue.popleft()
                 
-                if matrixprueba[row][col] == '0':
-                    matrixprueba[row][col] = '*'
+                if matrixprueba[row][col] == "0":
+                    matrixprueba[row][col] = "*"
 
                 for dr, dc in directions:
                     r, c = row + dr, col + dc
-                    if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                    if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
                         queue.append((r, c))
                         visited.add((r, c))
             
@@ -883,13 +902,13 @@ class FinalMatrixCreator:
                     row, col = queue.popleft()
                     
                     
-                    if matrixprueba[row][col] == '0':
-                        matrixprueba[row][col] = '*'
+                    if matrixprueba[row][col] == "0":
+                        matrixprueba[row][col] = "*"
 
                     
                     for dr, dc in directions:
                         r, c = row + dr, col + dc
-                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
                             queue.append((r, c))
                             visited.add((r, c))
 
@@ -909,13 +928,13 @@ class FinalMatrixCreator:
                         row, col = queue.popleft()
                         
                         
-                        if matrixprueba[row][col] == '0':
-                            matrixprueba[row][col] = '*'
+                        if matrixprueba[row][col] == "0":
+                            matrixprueba[row][col] = "*"
 
                         
                         for dr, dc in directions:
                             r, c = row + dr, col + dc
-                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
                                 queue.append((r, c))
                                 visited.add((r, c))
                     porcentage = self.calculate_percentage(matrixprueba)
@@ -934,12 +953,12 @@ class FinalMatrixCreator:
                     row, col = queue.popleft()
                     
                     
-                    if matrixprueba[row][col] == '0':
-                        matrixprueba[row][col] = '*'
+                    if matrixprueba[row][col] == "0":
+                        matrixprueba[row][col] = "*"
                     
                     for dr, dc in directions:
                         r, c = row + dr, col + dc
-                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
                             queue.append((r, c))
                             visited.add((r, c))
 
@@ -959,12 +978,12 @@ class FinalMatrixCreator:
                         row, col = queue.popleft()
                         
                        
-                        if matrixprueba[row][col] == '0':
-                            matrixprueba[row][col] = '*'
+                        if matrixprueba[row][col] == "0":
+                            matrixprueba[row][col] = "*"
 
                         for dr, dc in directions:
                             r, c = row + dr, col + dc
-                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
                                 queue.append((r, c))
                                 visited.add((r, c))
                     porcentage = self.calculate_percentage(matrixprueba)
@@ -980,7 +999,7 @@ class FinalMatrixCreator:
         for row in matrix:
             for element in row:
                 total_elements += 1
-                if element == '*':
+                if element == "*":
                     contador += 1
 
         if total_elements == 0:
@@ -1001,7 +1020,7 @@ class FinalMatrixCreator:
                     for di, dj in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  
                         ni, nj = i + di, j + dj
                         if 0 <= ni < filas and 0 <= nj < columnas: 
-                            if new_matrix[ni][nj] not in ('0', '7', '*'):
+                            if new_matrix[ni][nj] not in ("0", "r", "g", "o", "*"):
                                 new_matrix[ni][nj] = '*'
         
         return new_matrix
@@ -1013,10 +1032,38 @@ class FinalMatrixCreator:
         
         for i in range(filas):
             for j in range(columnas):
-                if matriz_prueba[i][j] == '*':
-                    matriz_original[i][j] = '*'
+                if matriz_prueba[i][j] == "*":
+                    matriz_original[i][j] = "*"
         
         return matriz_original
+    
+    def baldozazona4_correccion(self, matriz):
+        fila = 0
+        columna = 0
+        cant_f = len(matriz)
+        cant_c = len(matriz[0])
+            
+        for i in range(cant_f):
+            for j in range(cant_c):
+                lmatrix = matriz[fila][columna]
+                if lmatrix == "0":
+                    try:
+                        if ((((matriz[fila -1][columna - 1]) == ("r")) and ((matriz[fila -1][columna +1]) == ("r")) and ((matriz[fila +1][columna - 1]) == ("r")) and ((matriz[fila +1][columna + 1]) == ("r"))) or (((matriz[fila -1][columna - 1]) == ("g")) and ((matriz[fila -1][columna +1]) == ("g")) and ((matriz[fila +1][columna - 1]) == ("g")) and ((matriz[fila +1][columna + 1]) == ("g"))) or (((matriz[fila -1][columna - 1]) == ("o")) and ((matriz[fila -1][columna +1]) == ("o")) and ((matriz[fila +1][columna - 1]) == ("o")) and ((matriz[fila +1][columna + 1]) == ("o")))):  
+                                matriz[fila-1][columna] = "0"
+                                matriz[fila][columna-1] = "0"
+                                matriz[fila][columna+1] = "0"
+                                matriz[fila+1][columna] = "0"
+                        
+
+                    except IndexError:
+                            pass
+                        
+                                    
+                columna +=1
+
+            columna = 0
+            fila += 1
+        return matriz
 
     def pixel_grid_to_final_grid(self, pixel_grid: CompoundExpandablePixelGrid, robot_start_position: np.ndarray, victimas) -> np.ndarray: #pasar parametro de victimas
         np.set_printoptions(linewidth=1000000000000, threshold=100000000000000)
@@ -1123,6 +1170,7 @@ class FinalMatrixCreator:
         text_grid = self.transposed_matriz2(text_grid)
         text_grid = self.delete_row(text_grid)
         text_grid = self.transposed_matriz2(text_grid)
+        text_grid = self.correccion_de_interioresA(text_grid)
         text_grid_zone4 = text_grid
         text_grid_zone4 = self.baldoza_zona_4(text_grid_zone4)
         datos_importantes = self.direccion_de_zona4(text_grid_zone4)
@@ -1132,6 +1180,7 @@ class FinalMatrixCreator:
         text_grid_zone4 = self.bfszone4(text_grid_zone4, direccion_zona4, fila_fija_zona4, columna_fija_zona4)
         text_grid_zone4 = self.expand(text_grid_zone4)
         text_grid = self.combinar_matriz(text_grid, text_grid_zone4)
+        text_grid = self.baldozazona4_correccion(text_grid)
         """text_grid = self.correccion_de_bordes_filas(text_grid)
         text_grid = self.correccion_de_bordes_columnas(text_grid)
         text_grid = self.correccion_de_interioresA(text_grid)
