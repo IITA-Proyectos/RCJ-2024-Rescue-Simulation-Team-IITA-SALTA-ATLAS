@@ -12,6 +12,8 @@ import os
 from flags import SHOW_MAP_AT_END, DO_SAVE_FINAL_MAP, SAVE_FINAL_MAP_DIR, DO_SAVE_DEBUG_GRID, SAVE_DEBUG_GRID_DIR
 from mapping import mapper
 import time
+from collections import deque
+import copy
 #from executor import executor
 #from executor.executor import Executor
 #from fixture_detection.fixture_clasification import FixtureClasiffier
@@ -744,7 +746,278 @@ class FinalMatrixCreator:
             columna = 0
             fila += 1
 
+    def baldoza_zona_4(self, matriz):
+        fila = 0
+        columna = 0
+        cant_f = len(matriz)
+        cant_c = len(matriz[0])
+        
+        for i in range(cant_f):
+            for j in range(cant_c):
+                lmatrix = matriz[fila][columna]
+                if lmatrix == "0":
+                    try:
+                        if ((((matriz[fila -1][columna - 1]) == ("r")) and ((matriz[fila -1][columna +1]) == ("r")) and ((matriz[fila +1][columna - 1]) == ("r")) and ((matriz[fila +1][columna + 1]) == ("r")))  or  (((matriz[fila -1][columna - 1]) == ("g")) and ((matriz[fila -1][columna +1]) == ("g")) and ((matriz[fila +1][columna - 1]) == ("g")) and ((matriz[fila +1][columna + 1]) == ("g")))  or  (((matriz[fila -1][columna - 1]) == ("o")) and ((matriz[fila -1][columna +1]) == ("o")) and ((matriz[fila +1][columna - 1]) == ("o")) and ((matriz[fila +1][columna + 1]) == ("o")))):
+                            matriz[fila-1][columna-1] = "7"
+                            matriz[fila-1][columna] = "7"
+                            matriz[fila-1][columna+1] = "7"
+                            matriz[fila][columna-1] = "7"
+                            matriz[fila][columna+1] = "7"
+                            matriz[fila+1][columna-1] = "7"
+                            matriz[fila+1][columna] = "7"
+                            matriz[fila+1][columna+1] = "7"
+
+
+                    except IndexError:
+                            pass
+                columna += 1
+               
+
+            columna = 0
+            fila += 1
+
         return matriz
+
+
+    def direccion_de_zona4(self, matriz):
+        
+        fila = 0
+        columna = 0
+        cant_f = len(matriz)
+        cant_c = len(matriz[0])
+        contador = 0
+            
+        for i in range(cant_f):
+            for j in range(cant_c):
+                lmatrix = matriz[fila][columna]
+                if lmatrix == "0":
+                    try:
+                        if (((matriz[fila -1][columna - 1]) == ("7")) and ((matriz[fila -1][columna +1]) == ("7")) and ((matriz[fila +1][columna - 1]) == ("7")) and ((matriz[fila +1][columna + 1]) == ("7"))):  
+                            if contador == 0:
+                                fila_fija = fila
+                                columna_fija = columna
+                                primera_baldosaC = columna
+                                contador += 1
+                            elif contador == 1:
+                                segunda_baldosaC = columna
+                                contador+=1
+                            else:
+                                pass 
+
+
+                    except IndexError:
+                            pass
+                        
+                                    
+                columna +=1
+
+            columna = 0
+            fila += 1
+        if contador == 2:
+            dist_entre_columnas = segunda_baldosaC - primera_baldosaC
+
+            if dist_entre_columnas > 0:         #segunda columna mayor que la primera (avanzar hacia la derecha tomando como base la primera)
+                direccion = "derecha"
+                return direccion, fila_fija, columna_fija
+
+                                                    
+
+            else:
+                direccion = "izquierda"
+                return direccion, fila_fija, columna_fija      #primera columna mayor que la segunda (avanzar hacia la izquierda tomando como base la primera)
+            
+        elif contador == 1:
+                direccion = "indefinido"
+                return direccion, fila_fija, columna_fija
+        
+
+
+    def bfszone4(self, matrix, direccion, fila_inicio, columna_inicio):
+        matrixinicio = copy.deepcopy(matrix)  
+        rows = len(matrix)
+        cols = len(matrix[0])
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        start_row = fila_inicio + 3
+        start_col = columna_inicio
+        state = 0
+
+        if direccion == "izquierda":
+            start_col = start_col - 1
+            state = "normal"
+        elif direccion == "derecha":
+            start_col = start_col + 1
+            state = "normal"
+        else:
+            state = "indefinido"
+            
+        if state == "normal":
+            matrixprueba = copy.deepcopy(matrixinicio)  
+            queue = deque([(start_row, start_col)])
+            visited = set()
+            visited.add((start_row, start_col))
+
+            while queue:
+                row, col = queue.popleft()
+                
+                if matrixprueba[row][col] == '0':
+                    matrixprueba[row][col] = '*'
+
+                for dr, dc in directions:
+                    r, c = row + dr, col + dc
+                    if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                        queue.append((r, c))
+                        visited.add((r, c))
+            
+            return matrixprueba
+        
+        else:
+            if (rows - fila_inicio) < 6:
+                start_row = start_row - 6
+                start_col = start_col + 1
+                matrixprueba = copy.deepcopy(matrixinicio)
+                queue = deque([(start_row, start_col)])
+                visited = set()
+                visited.add((start_row, start_col))
+
+                while queue:
+                    row, col = queue.popleft()
+                    
+                    
+                    if matrixprueba[row][col] == '0':
+                        matrixprueba[row][col] = '*'
+
+                    
+                    for dr, dc in directions:
+                        r, c = row + dr, col + dc
+                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                            queue.append((r, c))
+                            visited.add((r, c))
+
+                porcentage = self.calculate_percentage(matrixprueba)
+                if porcentage < 50:
+                    return matrixprueba
+                
+                else:
+                    start_row = start_row + 6
+                    start_col = start_col - 1
+                    matrixprueba = copy.deepcopy(matrixinicio)
+                    queue = deque([(start_row, start_col)])
+                    visited = set()
+                    visited.add((start_row, start_col))
+
+                    while queue:
+                        row, col = queue.popleft()
+                        
+                        
+                        if matrixprueba[row][col] == '0':
+                            matrixprueba[row][col] = '*'
+
+                        
+                        for dr, dc in directions:
+                            r, c = row + dr, col + dc
+                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                                queue.append((r, c))
+                                visited.add((r, c))
+                    porcentage = self.calculate_percentage(matrixprueba)
+                    if porcentage < 50:
+                        return matrixprueba
+                    else:
+                        return matrixinicio
+            else:
+                start_row = start_row
+                start_col = start_col + 1
+                matrixprueba = copy.deepcopy(matrixinicio)
+                queue = deque([(start_row, start_col)])
+                visited = set()
+                visited.add((start_row, start_col))
+                while queue:
+                    row, col = queue.popleft()
+                    
+                    
+                    if matrixprueba[row][col] == '0':
+                        matrixprueba[row][col] = '*'
+                    
+                    for dr, dc in directions:
+                        r, c = row + dr, col + dc
+                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                            queue.append((r, c))
+                            visited.add((r, c))
+
+                porcentage = self.calculate_percentage(matrixprueba)
+                if porcentage < 50:
+                    return matrixprueba
+                
+                else:
+                    start_row = start_row + 6
+                    start_col = start_col - 1
+                    matrixprueba = copy.deepcopy(matrixinicio)
+                    queue = deque([(start_row, start_col)])
+                    visited = set()
+                    visited.add((start_row, start_col))
+
+                    while queue:
+                        row, col = queue.popleft()
+                        
+                       
+                        if matrixprueba[row][col] == '0':
+                            matrixprueba[row][col] = '*'
+
+                        for dr, dc in directions:
+                            r, c = row + dr, col + dc
+                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                                queue.append((r, c))
+                                visited.add((r, c))
+                    porcentage = self.calculate_percentage(matrixprueba)
+                    if porcentage < 50:
+                        return matrixprueba
+                    else:
+                        return matrixinicio
+
+    def calculate_percentage(self, matrix):
+        total_elements = 0
+        contador = 0
+
+        for row in matrix:
+            for element in row:
+                total_elements += 1
+                if element == '*':
+                    contador += 1
+
+        if total_elements == 0:
+            return 0 
+        
+        percentage = (contador / total_elements) * 100
+        return percentage
+
+    def expand(self, matrix):
+        filas = len(matrix)
+        columnas = len(matrix[0])
+        
+        new_matrix = [filas.copy() for filas in matrix]
+        
+        for i in range(filas):
+            for j in range(columnas):
+                if matrix[i][j] == '*':
+                    for di, dj in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  
+                        ni, nj = i + di, j + dj
+                        if 0 <= ni < filas and 0 <= nj < columnas: 
+                            if new_matrix[ni][nj] not in ('0', '7', '*'):
+                                new_matrix[ni][nj] = '*'
+        
+        return new_matrix
+
+
+    def combinar_matriz(self, matriz_original, matriz_prueba):
+        filas = len(matriz_original)
+        columnas = len(matriz_original[0])
+        
+        for i in range(filas):
+            for j in range(columnas):
+                if matriz_prueba[i][j] == '*':
+                    matriz_original[i][j] = '*'
+        
+        return matriz_original
+
     def pixel_grid_to_final_grid(self, pixel_grid: CompoundExpandablePixelGrid, robot_start_position: np.ndarray, victimas) -> np.ndarray: #pasar parametro de victimas
         np.set_printoptions(linewidth=1000000000000, threshold=100000000000000)
         #linewidth: ancho maximo de impresion
@@ -798,7 +1071,7 @@ class FinalMatrixCreator:
         offsets = self.__get_offsets(self.__square_size_px, pixel_grid.offsets)
         wall_node_array = self.wall_matrix_creator.transform_wall_array_to_bool_node_array(new, offsets)
         robot_detected_array = self.wall_matrix_creator.transform_robot_detected_to_string_node_array(fixture_array, offsets)
-        print(robot_detected_array)
+        #print(robot_detected_array)
 
 
 
@@ -850,6 +1123,15 @@ class FinalMatrixCreator:
         text_grid = self.transposed_matriz2(text_grid)
         text_grid = self.delete_row(text_grid)
         text_grid = self.transposed_matriz2(text_grid)
+        text_grid_zone4 = text_grid
+        text_grid_zone4 = self.baldoza_zona_4(text_grid_zone4)
+        datos_importantes = self.direccion_de_zona4(text_grid_zone4)
+        direccion_zona4 = datos_importantes[0]
+        fila_fija_zona4 = datos_importantes[1]
+        columna_fija_zona4 = datos_importantes[2]
+        text_grid_zone4 = self.bfszone4(text_grid_zone4, direccion_zona4, fila_fija_zona4, columna_fija_zona4)
+        text_grid_zone4 = self.expand(text_grid_zone4)
+        text_grid = self.combinar_matriz(text_grid, text_grid_zone4)
         """text_grid = self.correccion_de_bordes_filas(text_grid)
         text_grid = self.correccion_de_bordes_columnas(text_grid)
         text_grid = self.correccion_de_interioresA(text_grid)
