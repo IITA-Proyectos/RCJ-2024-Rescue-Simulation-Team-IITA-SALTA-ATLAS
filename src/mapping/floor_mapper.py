@@ -25,10 +25,11 @@ class FloorMapper:
         self.pixel_per_m = tile_resolution / tile_size
         self.pov_distance_from_center = round(0.079 * self.pixel_per_m) 
         #self.hole_color_filter = ColorFilter((0, 0, 10), (0, 0, 106))
-        self.hole_color_filter = ColorFilter((0, 0, 30), (0, 0, 40))
+        self.hole_color_filter = ColorFilter((0, 0, 8), (0, 0, 32))
         self.swamp_color_filter = ColorFilter((19, 112, 32), (19, 141, 166))
         self.checkpoint_color_filter = ColorFilter((95, 0, 65), (128, 122, 198))
         self.wall_color_filter = ColorFilter((90, 61,  0), (100, 150, 255))
+    # old valoration ((0, 0, 30), (0, 0, 40)),
 
         tiles_up = 0
         tiles_down = 1
@@ -187,6 +188,7 @@ class FloorMapper:
         #offsets = self.__get_offsets(tile_size)
 
         self.pixel_grid.arrays["hole_detections"] += self.hole_color_filter.filter(self.pixel_grid.arrays["floor_color"]).astype(np.bool_)
+        #print (self.hole_color_filter.filter(self.pixel_grid.arrays["floor_color"]).astype(np.bool_))
         #cv.imshow("holes", self.pixel_grid.arrays["hole_detections"].astype(np.uint8) * 255)
         self.pixel_grid.arrays["holes"] = self.get_squares_from_raw_array(self.pixel_grid.arrays["hole_detections"], self.pixel_grid.offsets - self.tile_resolution // 2, self.tile_resolution, detection_proportion=0.2)
 

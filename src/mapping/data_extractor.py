@@ -14,7 +14,7 @@ class FloorColorExtractor:
                     "normal":
                         {   
                             "range":   ((0, 0, 37), (0, 0, 192)), 
-                            "threshold":0.2},
+                            "threshold":0.1},
 
                     "nothing":
                         {
@@ -24,16 +24,16 @@ class FloorColorExtractor:
                     "checkpoint":
                         {
                             "range":((95, 0, 65), (128, 122, 198)),
-                            "threshold":0.2},
+                            "threshold":0.1},
                     "hole":
                         {
                             "range":((0, 0, 30), (0, 0, 40)),
-                            "threshold":0.2},
+                            "threshold":0.1},
                     
                     "swamp":
                         {
                             "range":((19, 112, 32), (19, 141, 166)),
-                            "threshold":0.2},
+                            "threshold":0.3},
 
                     "connection1-2":
                         {
@@ -48,7 +48,7 @@ class FloorColorExtractor:
                     "connection 1-4":
                         {
                             "range":((58, 211, 221), (60, 228, 225)),
-                            "threshold":0.2},
+                            "threshold":0.3},
 
 
                     "connection2-3":
