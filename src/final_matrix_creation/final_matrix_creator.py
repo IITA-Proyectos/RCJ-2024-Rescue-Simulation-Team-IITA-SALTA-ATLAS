@@ -362,7 +362,7 @@ class FloorMatrixCreator:
                     "4": # Checkpoint
                         {
                             "range":((113, 77, 62), (114, 84, 77)),
-                            "threshold":0.1},
+                            "threshold":0.03},
 
                     "2": # Hole
                         {
