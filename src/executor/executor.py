@@ -72,7 +72,7 @@ class Executor:
         self.letter_to_report = None
         self.report_orientation = Angle(0)
 
-        self.max_time_in_run = 8 * 60
+        self.max_time_in_run = 6 * 60
 
         self.map_sent = False
 
