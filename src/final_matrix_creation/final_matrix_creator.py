@@ -362,7 +362,7 @@ class FloorMatrixCreator:
                     "4": # Checkpoint
                         {
                             "range":((113, 77, 62), (114, 84, 77)),
-                            "threshold":0.03},
+                            "threshold":0.01},
 
                     "2": # Hole
                         {
@@ -850,9 +850,15 @@ class FinalMatrixCreator:
                 return direccion, fila_fija, columna_fija
         
 
+    def al_lado_1(self, matrix, row, col, directions):
+        for dr, dc in directions:
+            r, c = row + dr, col + dc
+            if 0 <= r < len(matrix) and 0 <= c < len(matrix[0]) and matrix[r][c] == '1':
+                return True
+        return False
 
     def bfszone4(self, matrix, direccion, fila_inicio, columna_inicio):
-        matrixinicio = copy.deepcopy(matrix)  
+        matrixinicio = copy.deepcopy(matrix)  # Crear una copia profunda de la matriz original
         rows = len(matrix)
         cols = len(matrix[0])
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -870,7 +876,7 @@ class FinalMatrixCreator:
             state = "indefinido"
             
         if state == "normal":
-            matrixprueba = copy.deepcopy(matrixinicio)  
+            matrixprueba = copy.deepcopy(matrixinicio)  # Crear una copia profunda para evitar modificar matrixinicio
             queue = deque([(start_row, start_col)])
             visited = set()
             visited.add((start_row, start_col))
@@ -878,14 +884,17 @@ class FinalMatrixCreator:
             while queue:
                 row, col = queue.popleft()
                 
-                if matrixprueba[row][col] == "0":
-                    matrixprueba[row][col] = "*"
+                # Check and mark the current cell if it is '0'
+                if matrixprueba[row][col] == '0':
+                    matrixprueba[row][col] = '*'
 
+                # Traverse adjacent cells
                 for dr, dc in directions:
                     r, c = row + dr, col + dc
-                    if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
-                        queue.append((r, c))
-                        visited.add((r, c))
+                    if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                        if not self.al_lado_1(matrixprueba, r, c, directions):
+                            queue.append((r, c))
+                            visited.add((r, c))
             
             return matrixprueba
         
@@ -901,16 +910,15 @@ class FinalMatrixCreator:
                 while queue:
                     row, col = queue.popleft()
                     
-                    
-                    if matrixprueba[row][col] == "0":
-                        matrixprueba[row][col] = "*"
+                    if matrixprueba[row][col] == '0':
+                        matrixprueba[row][col] = '*'
 
-                    
                     for dr, dc in directions:
                         r, c = row + dr, col + dc
-                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
-                            queue.append((r, c))
-                            visited.add((r, c))
+                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                            if not self.al_lado_1(matrixprueba, r, c, directions):
+                                queue.append((r, c))
+                                visited.add((r, c))
 
                 porcentage = self.calculate_percentage(matrixprueba)
                 if porcentage < 50:
@@ -927,16 +935,17 @@ class FinalMatrixCreator:
                     while queue:
                         row, col = queue.popleft()
                         
-                        
-                        if matrixprueba[row][col] == "0":
-                            matrixprueba[row][col] = "*"
+                        # Check and mark the current cell if it is '0'
+                        if matrixprueba[row][col] == '0':
+                            matrixprueba[row][col] = '*'
 
-                        
+                        # Traverse adjacent cells
                         for dr, dc in directions:
                             r, c = row + dr, col + dc
-                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
-                                queue.append((r, c))
-                                visited.add((r, c))
+                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                                if not self.al_lado_1(matrixprueba, r, c, directions):
+                                    queue.append((r, c))
+                                    visited.add((r, c))
                     porcentage = self.calculate_percentage(matrixprueba)
                     if porcentage < 50:
                         return matrixprueba
@@ -952,15 +961,17 @@ class FinalMatrixCreator:
                 while queue:
                     row, col = queue.popleft()
                     
+                    # Check and mark the current cell if it is '0'
+                    if matrixprueba[row][col] == '0':
+                        matrixprueba[row][col] = '*'
                     
-                    if matrixprueba[row][col] == "0":
-                        matrixprueba[row][col] = "*"
-                    
+                    # Traverse adjacent cells
                     for dr, dc in directions:
                         r, c = row + dr, col + dc
-                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
-                            queue.append((r, c))
-                            visited.add((r, c))
+                        if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                            if not self.al_lado_1(matrixprueba, r, c, directions):
+                                queue.append((r, c))
+                                visited.add((r, c))
 
                 porcentage = self.calculate_percentage(matrixprueba)
                 if porcentage < 50:
@@ -977,15 +988,17 @@ class FinalMatrixCreator:
                     while queue:
                         row, col = queue.popleft()
                         
-                       
-                        if matrixprueba[row][col] == "0":
-                            matrixprueba[row][col] = "*"
+                        # Check and mark the current cell if it is '0'
+                        if matrixprueba[row][col] == '0':
+                            matrixprueba[row][col] = '*'
 
+                        # Traverse adjacent cells
                         for dr, dc in directions:
                             r, c = row + dr, col + dc
-                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == "0":
-                                queue.append((r, c))
-                                visited.add((r, c))
+                            if 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and matrixprueba[r][c] == '0':
+                                if not self.al_lado_1(matrixprueba, r, c, directions):
+                                    queue.append((r, c))
+                                    visited.add((r, c))
                     porcentage = self.calculate_percentage(matrixprueba)
                     if porcentage < 50:
                         return matrixprueba
@@ -1008,19 +1021,42 @@ class FinalMatrixCreator:
         percentage = (contador / total_elements) * 100
         return percentage
 
-    def expand(self, matrix):
-        filas = len(matrix)
-        columnas = len(matrix[0])
+    def expandzone4(self, matrix):
         
-        new_matrix = [filas.copy() for filas in matrix]
+        rows = len(matrix)
+        cols = len(matrix[0])
         
-        for i in range(filas):
-            for j in range(columnas):
+        new_matrix = [row.copy() for row in matrix]
+        
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+        
+        for i in range(rows):
+            for j in range(cols):
                 if matrix[i][j] == '*':
-                    for di, dj in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  
+                    for di, dj in directions:
                         ni, nj = i + di, j + dj
-                        if 0 <= ni < filas and 0 <= nj < columnas: 
-                            if new_matrix[ni][nj] not in ("0", "r", "g", "o", "*"):
+                        if 0 <= ni < rows and 0 <= nj < cols: 
+                            if new_matrix[ni][nj] not in ('1', 'r', 'g', 'o', '*'):
+                                new_matrix[ni][nj] = '*'
+        
+        return new_matrix
+    
+    def expandzone4_v2(self, matrix):
+        
+        rows = len(matrix)
+        cols = len(matrix[0])
+        
+        new_matrix = [row.copy() for row in matrix]
+        
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+        
+        for i in range(rows):
+            for j in range(cols):
+                if matrix[i][j] == '*':
+                    for di, dj in directions:
+                        ni, nj = i + di, j + dj
+                        if 0 <= ni < rows and 0 <= nj < cols: 
+                            if new_matrix[ni][nj] not in ('0', 'r', 'g', 'o', '*'):
                                 new_matrix[ni][nj] = '*'
         
         return new_matrix
@@ -1178,7 +1214,8 @@ class FinalMatrixCreator:
         fila_fija_zona4 = datos_importantes[1]
         columna_fija_zona4 = datos_importantes[2]
         text_grid_zone4 = self.bfszone4(text_grid_zone4, direccion_zona4, fila_fija_zona4, columna_fija_zona4)
-        text_grid_zone4 = self.expand(text_grid_zone4)
+        text_grid_zone4 = self.expandzone4(text_grid_zone4)
+        text_grid_zone4 = self.expandzone4_v2(text_grid_zone4)
         text_grid = self.combinar_matriz(text_grid, text_grid_zone4)
         text_grid = self.baldozazona4_correccion(text_grid)
         """text_grid = self.correccion_de_bordes_filas(text_grid)
