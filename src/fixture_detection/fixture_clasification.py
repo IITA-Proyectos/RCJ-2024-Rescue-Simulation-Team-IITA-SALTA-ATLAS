@@ -30,7 +30,7 @@ class FixtureClasiffier:
         # Color filtering
         self.colors = ("black", "white", "yellow", "red")
         self.color_filters = {
-            "black": ColorFilter(lower_hsv=(0, 0, 41), upper_hsv=(0, 0, 160)),
+            "black": ColorFilter(lower_hsv=(0, 0, 0), upper_hsv=(0, 0, 160)), #anteriores que funcionan medio mal pero funcionan (lower_hsv=(0, 0, 41), upper_hsv=(0, 0, 160))
             "white": ColorFilter(lower_hsv=(0, 0, 170), upper_hsv=(255, 110, 208)),
             "yellow": ColorFilter(lower_hsv=(25, 170, 82), upper_hsv=(29, 255, 255)),
             "red": ColorFilter(lower_hsv=(134, 91, 155), upper_hsv=(175, 255, 204))           

@@ -24,8 +24,8 @@ class FixtureDetector:
         self.color_filters = {
             "black": ColorFilter(lower_hsv=(0, 0, 0), upper_hsv=(0, 0, 9)),
             "white": ColorFilter(lower_hsv=(0, 0, 193), upper_hsv=(255, 110, 208)),
-            "yellow": ColorFilter(lower_hsv=(25, 170, 82), upper_hsv=(29, 255, 255)),  #((30, 190, 227), (30, 205, 233))   (lower_hsv=(25, 170, 82), upper_hsv=(29, 255, 255))
-            "red": ColorFilter(lower_hsv=(134, 91, 185), upper_hsv=(175, 255, 204))    #((0, 190, 213), (0, 205, 233))    (lower_hsv=(134, 91, 185), upper_hsv=(175, 255, 204))      
+            "yellow": ColorFilter(lower_hsv=(25, 170, 82), upper_hsv=(30, 255, 255)),  #   (lower_hsv=(25, 170, 82), upper_hsv=(29, 255, 255))
+            "red": ColorFilter(lower_hsv=(134, 91, 185), upper_hsv=(175, 255, 204))    # (lower_hsv=(134, 91, 185), upper_hsv=(175, 255, 204))      
         }
 
         self.wall_color_filter = ColorFilter((90, 44,  0), (95, 213, 158))

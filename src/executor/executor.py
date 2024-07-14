@@ -72,7 +72,7 @@ class Executor:
         self.letter_to_report = None
         self.report_orientation = Angle(0)
 
-        self.max_time_in_run = 6 * 60
+        self.max_time_in_run = 1 * 60
 
         self.map_sent = False
 
@@ -166,7 +166,7 @@ class Executor:
 
     def check_map_sending(self):
         if self.mapper.time > self.max_time_in_run - 2 and not self.map_sent:
-            self.state_machine.change_state("send_map")
+            self.state_machine.change_state("state_end") #MODIFY THIS VALUE
             self.sequencer.reset_sequence()
 
     # STATES
