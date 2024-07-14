@@ -166,7 +166,7 @@ class Executor:
 
     def check_map_sending(self):
         if self.mapper.time > self.max_time_in_run - 2 and not self.map_sent:
-            self.state_machine.change_state("state_end") #MODIFY THIS VALUE
+            self.state_machine.change_state("explore") #MODIFY THIS VALUE
             self.sequencer.reset_sequence()
 
     # STATES

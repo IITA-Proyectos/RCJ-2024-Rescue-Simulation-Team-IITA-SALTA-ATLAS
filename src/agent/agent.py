@@ -64,6 +64,7 @@ class Agent(AgentInterface):
         self.__path_time_calculator = PathTimeCalculator(self.__mapper, 0.06, 0.01)
 
         self.__target_position = None
+        self.max_time_in_run = 1 * 60
 
     def update(self) -> None:
         self.__stage_machine.run()
@@ -81,6 +82,9 @@ class Agent(AgentInterface):
         self.do_force_calculation = False
 
         if not self.__navigation_agent.target_position_exists():
+            change_state_function("return_to_start")
+
+        elif self.__mapper.time > self.max_time_in_run - 2:
             change_state_function("return_to_start")
 
         else:
