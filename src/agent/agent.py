@@ -64,7 +64,7 @@ class Agent(AgentInterface):
         self.__path_time_calculator = PathTimeCalculator(self.__mapper, 0.06, 0.01)
 
         self.__target_position = None
-        self.max_time_in_run = 1 * 60
+        self.max_time_in_run = 7 * 60
 
     def update(self) -> None:
         self.__stage_machine.run()

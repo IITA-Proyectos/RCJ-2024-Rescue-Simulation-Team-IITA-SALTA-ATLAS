@@ -72,7 +72,7 @@ class Executor:
         self.letter_to_report = None
         self.report_orientation = Angle(0)
 
-        self.max_time_in_run = 1 * 60
+        self.max_time_in_run = 7 * 60
 
         self.map_sent = False
 
@@ -83,6 +83,8 @@ class Executor:
         self.color_filter_tuner = ColorFilterTuner(ColorFilter((0, 0, 29), (0, 0, 137)), TUNE_FILTER)
 
         self.victimas = [None]
+
+        self.finish_time_run = False
 
     def run(self):
         """Advances the simulation, updates all components and executes the state machine."""
@@ -166,6 +168,7 @@ class Executor:
 
     def check_map_sending(self):
         if self.mapper.time > self.max_time_in_run - 2 and not self.map_sent:
+            self.finish_time_run = True
             self.state_machine.change_state("explore") #MODIFY THIS VALUE
             self.sequencer.reset_sequence()
 
@@ -293,7 +296,7 @@ class Executor:
 
 
     def state_end(self, change_state_function):
-        final_matrix = self.final_matrix_creator.pixel_grid_to_final_grid(self.mapper.pixel_grid, self.mapper.start_position, self.victimas) #self.victimas (ponerlo como parametro directo)
+        final_matrix = self.final_matrix_creator.pixel_grid_to_final_grid(self.mapper.pixel_grid, self.mapper.start_position, self.victimas, self.finish_time_run) #self.victimas (ponerlo como parametro directo)
         self.robot.comunicator.send_map(final_matrix)
         self.robot.comunicator.send_end_of_play()
 
