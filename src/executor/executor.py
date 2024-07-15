@@ -74,6 +74,8 @@ class Executor:
 
         self.max_time_in_run = 7 * 60
 
+        self.max_real_time_in_run = 9 * 60
+
         self.map_sent = False
 
         self.robot.set_start_time()
