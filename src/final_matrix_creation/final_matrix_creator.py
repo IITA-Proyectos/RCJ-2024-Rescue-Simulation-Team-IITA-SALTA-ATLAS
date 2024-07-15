@@ -1101,7 +1101,7 @@ class FinalMatrixCreator:
             fila += 1
         return matriz
 
-    def pixel_grid_to_final_grid(self, pixel_grid: CompoundExpandablePixelGrid, robot_start_position: np.ndarray, victimas) -> np.ndarray: #pasar parametro de victimas
+    def pixel_grid_to_final_grid(self, pixel_grid: CompoundExpandablePixelGrid, robot_start_position: np.ndarray, victimas, timerun) -> np.ndarray: #pasar parametro de victimas
         np.set_printoptions(linewidth=1000000000000, threshold=100000000000000)
         #linewidth: ancho maximo de impresion
         #threshold: limite de elementos que se imprimen
@@ -1207,17 +1207,18 @@ class FinalMatrixCreator:
         text_grid = self.delete_row(text_grid)
         text_grid = self.transposed_matriz2(text_grid)
         text_grid = self.correccion_de_interioresA(text_grid)
-        text_grid_zone4 = text_grid
-        text_grid_zone4 = self.baldoza_zona_4(text_grid_zone4)
-        datos_importantes = self.direccion_de_zona4(text_grid_zone4)
-        direccion_zona4 = datos_importantes[0]
-        fila_fija_zona4 = datos_importantes[1]
-        columna_fija_zona4 = datos_importantes[2]
-        text_grid_zone4 = self.bfszone4(text_grid_zone4, direccion_zona4, fila_fija_zona4, columna_fija_zona4)
-        text_grid_zone4 = self.expandzone4(text_grid_zone4)
-        text_grid_zone4 = self.expandzone4_v2(text_grid_zone4)
-        text_grid = self.combinar_matriz(text_grid, text_grid_zone4)
-        text_grid = self.baldozazona4_correccion(text_grid)
+        if timerun == False:
+            text_grid_zone4 = text_grid
+            text_grid_zone4 = self.baldoza_zona_4(text_grid_zone4)
+            datos_importantes = self.direccion_de_zona4(text_grid_zone4)
+            direccion_zona4 = datos_importantes[0]
+            fila_fija_zona4 = datos_importantes[1]
+            columna_fija_zona4 = datos_importantes[2]
+            text_grid_zone4 = self.bfszone4(text_grid_zone4, direccion_zona4, fila_fija_zona4, columna_fija_zona4)
+            text_grid_zone4 = self.expandzone4(text_grid_zone4)
+            text_grid_zone4 = self.expandzone4_v2(text_grid_zone4)
+            text_grid = self.combinar_matriz(text_grid, text_grid_zone4)
+            text_grid = self.baldozazona4_correccion(text_grid)
         """text_grid = self.correccion_de_bordes_filas(text_grid)
         text_grid = self.correccion_de_bordes_columnas(text_grid)
         text_grid = self.correccion_de_interioresA(text_grid)
