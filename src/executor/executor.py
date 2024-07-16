@@ -171,8 +171,8 @@ class Executor:
     def check_map_sending(self):
         if self.mapper.time > self.max_time_in_run - 2 and not self.map_sent:
             self.finish_time_run = True
-            self.state_machine.change_state("explore") #MODIFY THIS VALUE
-            self.sequencer.reset_sequence()
+            #self.state_machine.change_state("explore") # _ MODIFY THIS VALUE (before = end) only necessary if I want send the map and not return to start
+            #self.sequencer.reset_sequence()
 
     # STATES
     def state_init(self, change_state_function):
@@ -227,7 +227,11 @@ class Executor:
             print("rotation:", self.robot.orientation)
             print("position:", self.robot.position)
         
+        #if self.finish_time_run == True:
+        #    change_state_function("return_to_start")
+
         if self.agent.do_end():
+            print("estoy en do end")
             self.state_machine.change_state("end")
 
         cam_images = self.robot.get_camera_images()

@@ -1202,12 +1202,12 @@ class FinalMatrixCreator:
         text_grid = self.__get_final_text_grid(wall_node_array, floor_string_array, robot_node)
         text_grid = self.unificador_de_matrices(vict_grid, text_grid)
         print("el programa")
-        text_grid = self.delete_row(text_grid)
-        text_grid = self.transposed_matriz2(text_grid)
-        text_grid = self.delete_row(text_grid)
-        text_grid = self.transposed_matriz2(text_grid)
-        text_grid = self.correccion_de_interioresA(text_grid)
         if timerun == False:
+            text_grid = self.delete_row(text_grid)
+            text_grid = self.transposed_matriz2(text_grid)
+            text_grid = self.delete_row(text_grid)
+            text_grid = self.transposed_matriz2(text_grid)
+            text_grid = self.correccion_de_interioresA(text_grid)
             text_grid_zone4 = text_grid
             text_grid_zone4 = self.baldoza_zona_4(text_grid_zone4)
             datos_importantes = self.direccion_de_zona4(text_grid_zone4)
