@@ -85,6 +85,7 @@ class Agent(AgentInterface):
             change_state_function("return_to_start")
 
         elif self.__mapper.time > self.max_time_in_run - 2:
+            print("finish time run")
             change_state_function("return_to_start")
 
         else:
