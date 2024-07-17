@@ -25,7 +25,7 @@ class FloorMapper:
         self.pixel_per_m = tile_resolution / tile_size
         self.pov_distance_from_center = round(0.079 * self.pixel_per_m) 
         #self.hole_color_filter = ColorFilter((0, 0, 10), (0, 0, 106))
-        self.hole_color_filter = ColorFilter((0, 0, 4), (0, 0, 106))
+        self.hole_color_filter = ColorFilter((0, 0, 10), (0, 0, 106))
         self.swamp_color_filter = ColorFilter((19, 112, 32), (19, 141, 166))
         self.checkpoint_color_filter = ColorFilter((95, 0, 65), (128, 122, 198))
         self.wall_color_filter = ColorFilter((90, 61,  0), (100, 150, 255))
