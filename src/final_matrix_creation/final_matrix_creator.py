@@ -753,7 +753,8 @@ class FinalMatrixCreator:
         columna = 0
         cant_f = len(matriz)
         cant_c = len(matriz[0])
-        
+        contador = 0
+        no_hay_zona4 = False
         for i in range(cant_f):
             for j in range(cant_c):
                 lmatrix = matriz[fila][columna]
@@ -768,6 +769,7 @@ class FinalMatrixCreator:
                             matriz[fila+1][columna-1] = "r"
                             matriz[fila+1][columna] = "r"
                             matriz[fila+1][columna+1] = "r"
+                            contador+=1
 
                         elif (((matriz[fila -1][columna - 1]) == ("g")) and ((matriz[fila -1][columna +1]) == ("g")) and ((matriz[fila +1][columna - 1]) == ("g")) and ((matriz[fila +1][columna + 1]) == ("g"))):
                             matriz[fila-1][columna-1] = "g"
@@ -778,6 +780,8 @@ class FinalMatrixCreator:
                             matriz[fila+1][columna-1] = "g"
                             matriz[fila+1][columna] = "g"
                             matriz[fila+1][columna+1] = "g"
+                            contador+=1
+
                         elif (((matriz[fila -1][columna - 1]) == ("o")) and ((matriz[fila -1][columna +1]) == ("o")) and ((matriz[fila +1][columna - 1]) == ("o")) and ((matriz[fila +1][columna + 1]) == ("o"))):
                             matriz[fila-1][columna-1] = "o"
                             matriz[fila-1][columna] = "o"
@@ -787,6 +791,8 @@ class FinalMatrixCreator:
                             matriz[fila+1][columna-1] = "o"
                             matriz[fila+1][columna] = "o"
                             matriz[fila+1][columna+1] = "o"
+                            contador+=1
+
                     except IndexError:
                             pass
                 columna += 1
@@ -794,8 +800,11 @@ class FinalMatrixCreator:
 
             columna = 0
             fila += 1
+        if contador == 0:
+            no_hay_zona4 = True
+            print(no_hay_zona4)
 
-        return matriz
+        return matriz, no_hay_zona4
 
 
     def direccion_de_zona4(self, matriz):
@@ -1202,23 +1211,27 @@ class FinalMatrixCreator:
         text_grid = self.__get_final_text_grid(wall_node_array, floor_string_array, robot_node)
         text_grid = self.unificador_de_matrices(vict_grid, text_grid)
         print("el programa")
+        text_grid = self.delete_row(text_grid)
+        text_grid = self.transposed_matriz2(text_grid)
+        text_grid = self.delete_row(text_grid)
+        text_grid = self.transposed_matriz2(text_grid)
+        text_grid = self.correccion_de_interioresA(text_grid)
         if timerun == False:
-            text_grid = self.delete_row(text_grid)
-            text_grid = self.transposed_matriz2(text_grid)
-            text_grid = self.delete_row(text_grid)
-            text_grid = self.transposed_matriz2(text_grid)
-            text_grid = self.correccion_de_interioresA(text_grid)
             text_grid_zone4 = text_grid
-            text_grid_zone4 = self.baldoza_zona_4(text_grid_zone4)
-            datos_importantes = self.direccion_de_zona4(text_grid_zone4)
-            direccion_zona4 = datos_importantes[0]
-            fila_fija_zona4 = datos_importantes[1]
-            columna_fija_zona4 = datos_importantes[2]
-            text_grid_zone4 = self.bfszone4(text_grid_zone4, direccion_zona4, fila_fija_zona4, columna_fija_zona4)
-            text_grid_zone4 = self.expandzone4(text_grid_zone4)
-            text_grid_zone4 = self.expandzone4_v2(text_grid_zone4)
-            text_grid = self.combinar_matriz(text_grid, text_grid_zone4)
-            text_grid = self.baldozazona4_correccion(text_grid)
+            zone4 = self.baldoza_zona_4(text_grid_zone4)
+            text_grid_zone4 = zone4[0]
+            nohayzona4 = zone4[1]
+            if nohayzona4 == False:
+                print("lo logreee")
+                datos_importantes = self.direccion_de_zona4(text_grid_zone4)
+                direccion_zona4 = datos_importantes[0]
+                fila_fija_zona4 = datos_importantes[1]
+                columna_fija_zona4 = datos_importantes[2]
+                text_grid_zone4 = self.bfszone4(text_grid_zone4, direccion_zona4, fila_fija_zona4, columna_fija_zona4)
+                text_grid_zone4 = self.expandzone4(text_grid_zone4)
+                text_grid_zone4 = self.expandzone4_v2(text_grid_zone4)
+                text_grid = self.combinar_matriz(text_grid, text_grid_zone4)
+                text_grid = self.baldozazona4_correccion(text_grid)
         """text_grid = self.correccion_de_bordes_filas(text_grid)
         text_grid = self.correccion_de_bordes_columnas(text_grid)
         text_grid = self.correccion_de_interioresA(text_grid)
